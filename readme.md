@@ -23,6 +23,7 @@ visually pleasing that stayed out of my way.
 - Shows the current path in the title and the [current folder & command](screenshot-title-cmd.png) when a process is running.
 - Support VI-mode indication by reverse prompt symbol (Zsh 5.3+).
 - Makes an excellent starting point for your own custom prompt.
+
 ### Description
 
 My prompt consist of 3 parts, the main left-sided prompt just with a prompt
