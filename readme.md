@@ -21,7 +21,6 @@ visually pleasing that stayed out of my way.
 - Command execution time will be displayed if it exceeds the set threshold.
 - Username and host only displayed when in an SSH session.
 - Shows the current path in the title and the [current folder & command](screenshot-title-cmd.png) when a process is running.
-- Support VI-mode indication by reverse prompt symbol (Zsh 5.3+).
 - Makes an excellent starting point for your own custom prompt.
 
 ### Description
@@ -92,7 +91,6 @@ Right prompt:
 | **`SIMPL_GIT_UNTRACKED_DIRTY=0`** | Do not include untracked files in dirtiness check. Mostly useful on large repos (like WebKit). |                |
 | **`SIMPL_GIT_DELAY_DIRTY_CHECK`** | Time in seconds to delay git dirty checking when `git status` takes > 5 seconds.               | `1800` seconds |
 | **`SIMPL_PROMPT_SYMBOL`**         | Defines the prompt symbol.                                                                     | `❱`            |
-| **`SIMPL_PROMPT_VICMD_SYMBOL`**   | Defines the prompt symbol used when the `vicmd` keymap is active (VI-mode).                    | `❰`            |
 | **`SIMPL_GIT_DOWN_ARROW`**        | Defines the git down arrow symbol.                                                             | `⇣`            |
 | **`SIMPL_GIT_UP_ARROW`**          | Defines the git up arrow symbol.                                                               | `⇡`            |
 
