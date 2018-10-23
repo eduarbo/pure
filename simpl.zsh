@@ -12,8 +12,22 @@
 # %a => current action (rebase/merge)
 
 # prompt:
-# %F => color dict
-# %f => reset color
+# %B => Start boldface mode.
+# %b => Stop boldface mode.
+# %U => Start underline mode.
+# %u => Stop underline mode.
+# %S => Start standout mode.
+# %s => Stop standout mode.
+# %K => Start using a different bacKground colour. The syntax is identical to
+#       that for %F and %f.
+# %k => Stop using a different bacKground colour.
+# %F => Start using a different foreground colour, if supported by the terminal.
+#       The colour may be specified two ways: either as a numeric argument, as
+#       normal, or by a sequence in braces following the %F, for example
+#       %F{red}. In the latter case the values allowed are as described for the
+#       fg zle_highlight attribute; Character Highlighting. This means that
+#       numeric colours are allowed in the second format also.
+# %f => Reset foreground color.
 # %~ => current path
 # %* => time
 # %n => username
@@ -37,6 +51,44 @@
 # \e[K  => clears everything after the cursor on the current line
 # \e[2K => clear everything on the current line
 
+# Configuration
+SIMPL_PREPOSITION_COLOR="${SIMPL_PREPOSITION_COLOR:-"%F{8}"}"
+
+SIMPL_USER_COLOR="${SIMPL_USER_COLOR:-"%F{yellow}"}"
+SIMPL_USER_ROOT_COLOR="${SIMPL_USER_ROOT_COLOR:-"%B%F{red}"}"
+SIMPL_HOST_COLOR="${SIMPL_HOST_COLOR:-"%B%F{yellow}"}"
+SIMPL_HOST_SYMBOL_COLOR="${SIMPL_HOST_SYMBOL_COLOR:-"%F{yellow}"}"
+SIMPL_USER_HOST_PREPOSITION="${SIMPL_USER_HOST_PREPOSITION:-"${SIMPL_PREPOSITION_COLOR} at "}"
+
+SIMPL_DIR_COLOR="${SIMPL_DIR_COLOR:-"%F{14}"}"
+
+SIMPL_GIT_BRANCH_COLOR="${SIMPL_GIT_BRANCH_COLOR:-"%F{10}"}"
+SIMPL_GIT_ARROW_COLOR="${SIMPL_GIT_ARROW_COLOR:-"%F{12}"}"
+SIMPL_GIT_DIRTY_SYMBOL="${SIMPL_GIT_DIRTY_SYMBOL:-*}"
+SIMPL_GIT_UP_ARROW="${SIMPL_GIT_UP_ARROW:-⇡}"
+SIMPL_GIT_DOWN_ARROW="${SIMPL_GIT_DOWN_ARROW:-⇣}"
+SIMPL_GIT_UNTRACKED_DIRTY="${SIMPL_GIT_UNTRACKED_DIRTY:-1}"
+SIMPL_GIT_DELAY_DIRTY_CHECK="${SIMPL_GIT_DELAY_DIRTY_CHECK:-1800}"
+SIMPL_GIT_PULL="${SIMPL_GIT_PULL:-1}"
+
+SIMPL_VENV_COLOR="${SIMPL_VENV_COLOR:-"%F{magenta}"}"
+
+SIMPL_PROMPT_SYMBOL="${SIMPL_PROMPT_SYMBOL:-❱}"
+SIMPL_PROMPT_ROOT_SYMBOL="${SIMPL_PROMPT_ROOT_SYMBOL:-#}"
+SIMPL_PROMPT_SYMBOL_COLOR="${SIMPL_PROMPT_SYMBOL_COLOR:-"%F{yellow}"}"
+SIMPL_PROMPT_SYMBOL_ERROR_COLOR="${SIMPL_PROMPT_SYMBOL_ERROR_COLOR:-"%F{red}"}"
+SIMPL_PROMPT2_SYMBOL_COLOR="${SIMPL_PROMPT2_SYMBOL_COLOR:-"%F{8}"}"
+
+SIMPL_PROMPT_VICMD_SYMBOL="${SIMPL_PROMPT_VICMD_SYMBOL:-❰}"
+
+SIMPL_CMD_MAX_EXEC_TIME="${SIMPL_CMD_MAX_EXEC_TIME:=1}"
+SIMPL_EXEC_TIME_COLOR="${SIMPL_EXEC_TIME_COLOR:-"%F{8}"}"
+SIMPL_JOBS_COLOR="${SIMPL_JOBS_COLOR:-"%F{8}"}"
+
+# PROMPT_SIMPL_HOSTNAME_SYMBOL_MAP="${PROMPT_SIMPL_HOSTNAME_SYMBOL_MAP}"
+
+# Utils
+cl="%f%s%u%k%b"
 
 # turns seconds into human readable time
 # 165392 => 1d 21h 56m 32s
@@ -61,15 +113,9 @@ prompt_simpl_check_cmd_exec_time() {
 	integer elapsed
 	(( elapsed = EPOCHSECONDS - ${prompt_simpl_cmd_timestamp:-$EPOCHSECONDS} ))
 	typeset -g prompt_simpl_cmd_exec_time=
-	(( elapsed > ${SIMPL_CMD_MAX_EXEC_TIME:=5} )) && {
+	(( elapsed > ${SIMPL_CMD_MAX_EXEC_TIME} )) && {
 		prompt_simpl_human_time_to_var $elapsed "prompt_simpl_cmd_exec_time"
 	}
-}
-
-prompt_simpl_jobs_number_to_var() {
-	local _jobs="$(jobs | sed -n '$=')"
-	# store human readable time in variable as specified by caller
-	typeset -g "${var}"="${_jobs}"
 }
 
 prompt_simpl_set_title() {
@@ -126,35 +172,37 @@ prompt_simpl_preexec() {
 prompt_simpl_preprompt_render() {
 	setopt localoptions noshwordsplit
 
+	local on="${SIMPL_PREPOSITION_COLOR}on${cl}"
+
 	# Set color for git branch/dirty status, change color if dirty checking has
 	# been delayed.
-	local git_color=11
-	[[ -n ${prompt_simpl_git_last_dirty_check_timestamp+x} ]] && git_color=red
+	local branch_color="${SIMPL_GIT_BRANCH_COLOR}"
+	[[ -n ${prompt_simpl_git_last_dirty_check_timestamp+x} ]] && branch_color="${cl}%F{red}"
 
 	# Initialize the preprompt array.
 	local -a preprompt_parts
 
+	# Username and machine, if applicable.
+	[[ -n $prompt_simpl_state[username] ]] && preprompt_parts+=("${prompt_simpl_state[username]}")
+
 	# Set the path.
-	preprompt_parts+=('%F{cyan}%~%f')
+	preprompt_parts+=("${SIMPL_DIR_COLOR}%~${cl}")
 
 	# Add git branch and dirty status info.
 	typeset -gA prompt_simpl_vcs_info
 	if [[ -n $prompt_simpl_vcs_info[branch] ]]; then
-		preprompt_parts+=("%F{8}on %F{$git_color}"'${prompt_simpl_vcs_info[branch]}${prompt_simpl_git_dirty}%f')
+		preprompt_parts+=("${on} ${branch_color}${prompt_simpl_vcs_info[branch]}${prompt_simpl_git_dirty}${cl}")
 	fi
 	# Git pull/push arrows.
 	if [[ -n $prompt_simpl_git_arrows ]]; then
-		preprompt_parts+=('%F{blue}${prompt_simpl_git_arrows}%f')
+		preprompt_parts+=("${SIMPL_GIT_ARROW_COLOR}${prompt_simpl_git_arrows}${cl}")
 	fi
 
-	# Username and machine, if applicable.
-	[[ -n $prompt_simpl_state[username] ]] && preprompt_parts+=('${prompt_simpl_state[username]}')
+	# display number of jobs in background
+	preprompt_parts+=("${SIMPL_JOBS_COLOR}%(1j.%j&.)${cl}")
 
 	# Execution time.
-	[[ -n $prompt_simpl_cmd_exec_time ]] && preprompt_parts+=('%F{8}${prompt_simpl_cmd_exec_time}%f')
-
-	# display number of jobs in background
-	preprompt_parts+=('%F{8}%(1j.%j&.)%f')
+	[[ -n $prompt_simpl_cmd_exec_time ]] && preprompt_parts+=("${SIMPL_EXEC_TIME_COLOR}${prompt_simpl_cmd_exec_time}${cl}")
 
 	local cleaned_ps1=$PROMPT
 	local -H MATCH MBEGIN MEND
@@ -214,9 +262,6 @@ prompt_simpl_precmd() {
 		psvar[12]="${VIRTUAL_ENV:t}"
 		export VIRTUAL_ENV_DISABLE_PROMPT=12
 	fi
-
-	# Make sure VIM prompt is reset.
-	prompt_simpl_reset_prompt_symbol
 
 	# print the preprompt
 	prompt_simpl_preprompt_render "precmd"
@@ -383,17 +428,17 @@ prompt_simpl_async_refresh() {
 	async_job "prompt_simpl" prompt_simpl_async_git_arrows
 
 	# do not preform git fetch if it is disabled or in home folder.
-	if (( ${SIMPL_GIT_PULL:-1} )) && [[ $prompt_simpl_vcs_info[top] != $HOME ]]; then
+	if (( ${SIMPL_GIT_PULL} )) && [[ $prompt_simpl_vcs_info[top] != $HOME ]]; then
 		# tell worker to do a git fetch
 		async_job "prompt_simpl" prompt_simpl_async_git_fetch
 	fi
 
 	# if dirty checking is sufficiently fast, tell worker to check it again, or wait for timeout
 	integer time_since_last_dirty_check=$(( EPOCHSECONDS - ${prompt_simpl_git_last_dirty_check_timestamp:-0} ))
-	if (( time_since_last_dirty_check > ${SIMPL_GIT_DELAY_DIRTY_CHECK:-1800} )); then
+	if (( time_since_last_dirty_check > ${SIMPL_GIT_DELAY_DIRTY_CHECK} )); then
 		unset prompt_simpl_git_last_dirty_check_timestamp
 		# check check if there is anything to pull
-		async_job "prompt_simpl" prompt_simpl_async_git_dirty ${SIMPL_GIT_UNTRACKED_DIRTY:-1}
+		async_job "prompt_simpl" prompt_simpl_async_git_dirty ${SIMPL_GIT_UNTRACKED_DIRTY}
 	fi
 }
 
@@ -401,8 +446,8 @@ prompt_simpl_check_git_arrows() {
 	setopt localoptions noshwordsplit
 	local arrows left=${1:-0} right=${2:-0}
 
-	(( right > 0 )) && arrows+=${SIMPL_GIT_DOWN_ARROW:-⇣}
-	(( left > 0 )) && arrows+=${SIMPL_GIT_UP_ARROW:-⇡}
+	(( right > 0 )) && arrows+=${SIMPL_GIT_DOWN_ARROW}
+	(( left > 0 )) && arrows+=${SIMPL_GIT_UP_ARROW}
 
 	[[ -n $arrows ]] || return
 	typeset -g REPLY=$arrows
@@ -466,7 +511,7 @@ prompt_simpl_async_callback() {
 			if (( code == 0 )); then
 				prompt_simpl_git_dirty=
 			else
-				prompt_simpl_git_dirty="*"
+				prompt_simpl_git_dirty="${SIMPL_GIT_DIRTY_SYMBOL}"
 			fi
 
 			[[ $prev_dirty != $prompt_simpl_git_dirty ]] && do_render=1
@@ -512,28 +557,11 @@ prompt_simpl_async_callback() {
 	unset prompt_simpl_async_render_requested
 }
 
-prompt_simpl_reset_prompt_symbol() {
-	prompt_simpl_state[prompt]=${SIMPL_PROMPT_SYMBOL:-\❱}
-}
-
-prompt_simpl_update_vim_prompt_widget() {
-	setopt localoptions noshwordsplit
-	prompt_simpl_state[prompt]=${${KEYMAP/vicmd/${SIMPL_PROMPT_VICMD_SYMBOL:-\❰}}/(main|viins)/${SIMPL_PROMPT_SYMBOL:-\❱}}
-	zle && zle .reset-prompt
-}
-
-prompt_simpl_reset_vim_prompt_widget() {
-	setopt localoptions noshwordsplit
-	prompt_simpl_reset_prompt_symbol
-	zle && zle .reset-prompt
-}
-
 prompt_simpl_state_setup() {
 	setopt localoptions noshwordsplit
 
 	# Check SSH_CONNECTION and the current state.
 	local ssh_connection=${SSH_CONNECTION:-$PROMPT_SIMPL_SSH_CONNECTION}
-	local username
 	if [[ -z $ssh_connection ]] && (( $+commands[who] )); then
 		# When changing user on a remote system, the $SSH_CONNECTION
 		# environment variable can be lost, attempt detection via who.
@@ -566,16 +594,29 @@ prompt_simpl_state_setup() {
 		unset MATCH MBEGIN MEND
 	fi
 
-	# show username@host if logged in through SSH
-	[[ -n $ssh_connection ]] && username='%F{242}%n@%m%f'
+	local username
 
-	# show username@host if root, with username in white
-	[[ $UID -eq 0 ]] && username='%F{white}%n%f%F{242}@%m%f'
+	local at="${SIMPL_USER_HOST_PREPOSITION}${cl}"
+	local in="${SIMPL_PREPOSITION_COLOR}in${cl}"
+
+	local prompt="%(#.${SIMPL_PROMPT_ROOT_SYMBOL}.${SIMPL_PROMPT_SYMBOL})${cl}"
+	local user="%(#.${SIMPL_USER_ROOT_COLOR}%n.${SIMPL_USER_COLOR}%n)${cl}"
+	local host_symbol="$PROMPT_SIMPL_HOSTNAME_SYMBOL_MAP[$( hostname -s )]"
+
+	# always show hostname symbol if available
+	if [[ -n $host_symbol ]]; then
+		username="${SIMPL_HOST_SYMBOL_COLOR}${host_symbol}${cl}"
+		[[ "$SSH_CONNECTION" != '' || $UID -eq 0 ]] && username+=" ${user} ${in}"
+	# only show username & hostname if connected via ssh
+	elif [[ "$SSH_CONNECTION" != '' || $UID -eq 0 ]]; then
+		[[ "$SSH_CONNECTION" != '' ]] && user+="${at}${SIMPL_HOST_COLOR}%m${cl}"
+		username="${user} ${in}"
+	fi
 
 	typeset -gA prompt_simpl_state
 	prompt_simpl_state=(
-		username "$username"
-		prompt	 "${SIMPL_PROMPT_SYMBOL:-❱}"
+		username "${username}"
+		prompt	 "${prompt}"
 	)
 }
 
@@ -613,19 +654,10 @@ prompt_simpl_setup() {
 
 	prompt_simpl_state_setup
 
-	zle -N prompt_simpl_update_vim_prompt_widget
-	zle -N prompt_simpl_reset_vim_prompt_widget
-	if (( $+functions[add-zle-hook-widget] )); then
-		add-zle-hook-widget zle-line-finish prompt_simpl_reset_vim_prompt_widget
-		add-zle-hook-widget zle-keymap-select prompt_simpl_update_vim_prompt_widget
-	fi
-
-	# display virtualenv when activated
-	PROMPT='%(12V.%F{magenta}%12v%f .)'
 	# prompt turns red if the previous command didn't exit with 0
-	PROMPT+='%(?.%F{yellow}.%F{red})${prompt_simpl_state[prompt]}%f '
+	PROMPT="%(?.${SIMPL_PROMPT_SYMBOL_COLOR}.${SIMPL_PROMPT_SYMBOL_ERROR_COLOR})${prompt_simpl_state[prompt]}${cl} "
 
-	PROMPT2='%F{8}${prompt_simpl_state[prompt]}%f '
+	PROMPT2="${SIMPL_PROMPT2_SYMBOL_COLOR}${prompt_simpl_state[prompt]}${cl} "
 
 	# Store prompt expansion symbols for in-place expansion via (%). For
 	# some reason it does not work without storing them in a variable first.
@@ -656,9 +688,8 @@ prompt_simpl_setup() {
 
 	unset ZSH_THEME  # Guard against Oh My Zsh themes overriding Simpl.
 
-	# show right promp with username and host if logged in through SSH or is root
-	# also change username color if root
-	[[ "$SSH_CONNECTION" != '' || $UID -eq 0 ]] && RPROMPT='%F{8}%(#.%F{9}%n%F{8}.%n) at %B%m%b%f'
+	# display virtualenv when activated in right prompt
+	RPROMPT="%F{8}%(12V.${SIMPL_VENV_COLOR}%12v${cl} .)"
 }
 
 prompt_simpl_setup "$@"
