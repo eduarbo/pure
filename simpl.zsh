@@ -56,8 +56,8 @@ SIMPL_PREPOSITION_COLOR="${SIMPL_PREPOSITION_COLOR:-"%F{8}"}"
 
 SIMPL_USER_COLOR="${SIMPL_USER_COLOR:-"%F{yellow}"}"
 SIMPL_USER_ROOT_COLOR="${SIMPL_USER_ROOT_COLOR:-"%B%F{red}"}"
-SIMPL_HOST_COLOR="${SIMPL_HOST_COLOR:-"%B%F{yellow}"}"
-SIMPL_HOST_SYMBOL_COLOR="${SIMPL_HOST_SYMBOL_COLOR:-"%F{yellow}"}"
+SIMPL_HOST_COLOR="${SIMPL_HOST_COLOR:-"${SIMPL_USER_COLOR}"}"
+SIMPL_HOST_SYMBOL_COLOR="${SIMPL_HOST_SYMBOL_COLOR:-"${SIMPL_HOST_COLOR}"}"
 SIMPL_USER_HOST_PREPOSITION="${SIMPL_USER_HOST_PREPOSITION:-"${SIMPL_PREPOSITION_COLOR}at"}"
 
 SIMPL_DIR_COLOR="${SIMPL_DIR_COLOR:-"%F{14}"}"
@@ -601,7 +601,7 @@ prompt_simpl_state_setup() {
 	local user="%(#.${SIMPL_USER_ROOT_COLOR}%n.${SIMPL_USER_COLOR}%n)${cl}"
 	local username="${user} ${in}"
 	local host_symbol="$PROMPT_SIMPL_HOSTNAME_SYMBOL_MAP[$( hostname -s )]"
-	local host="${SIMPL_HOST_COLOR}%m${cl}"
+	local host="${SIMPL_HOST_COLOR}%B%m${cl}"
 
 	# only show hostname if connected via ssh
 	if [[ "$SSH_CONNECTION" != '' ]]; then
