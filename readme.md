@@ -1,17 +1,22 @@
 # Simpl
 
-> Pretty, simple, minimal, customizable and fast ZSH prompt based on @sindresorhus's [Pure](https://github.com/sindresorhus/pure)
+> Pretty, minimal, customizable and fast ZSH prompt based on
+> @sindresorhus's [Pure](https://github.com/sindresorhus/pure)
 
 <img src="screenshot.png" width="864">
+
 
 ## Screencast
 
 <a href="https://asciinema.org/a/7td6jwaefjcnq23sta884t7wr" target="_blank"><img src="https://asciinema.org/a/7td6jwaefjcnq23sta884t7wr.png" /></a>
 
+
 ## Overview
 
 Most prompts are cluttered, ugly and slow. I wanted something minimalist and
 visually pleasing that stayed out of my way.
+
+### Why?
 
 - Comes with the perfect prompt character.
   Author went through the whole Unicode range to find it.
@@ -23,66 +28,10 @@ visually pleasing that stayed out of my way.
 - Shows the current path in the title and the [current folder & command](screenshot-title-cmd.png) when a process is running.
 - Makes an excellent starting point for your own custom prompt.
 
-### Description
 
-My prompt consist of 3 parts, the main left-sided prompt just with a prompt
-character so I have room for long commands, a pre-left-sided prompt to display
-the main context (e.g. pwd and git info), and a right-sided prompt for
-additional context that dissapears when text goes over it or line is accepted.
+## Customization
 
-This structure makes it easy to read for me as I can identify easily the
-executed commands and working directories through the scrollback buffer due to
-its fixed position in the line. Since the right-sided prompt is splited in 2
-lines it works well on small windows. This is perfect to me as I always end up
-working with multiple tmux panes.
-
-To keep it simple I just support the features I use on a daily basis, so this
-prompt won't be cluttered with fancy battery indicators.
-
-A prompt with all features:
-
-```
-~/dev/simpl on master* ⇡ 42s 4&
-virtualenv ❱                                                 eduarbo at GlaDoS
-```
-
-Left prompt:
-
-- `❱` is shown if you are a normal user. When root, a classic # will be shown instead
-- `❱` will be `$SIMPL_PROMPT_SYMBOL_COLOR` if the last command exited successfully,
-otherwise will be `$SIMPL_PROMPT_SYMBOL_FAIL_COLOR` (defaults to red)
-- Displays python's virtualenv name before `❱` if activated
-
-Pre left prompt:
-
-- A short `pwd` version is shown
-- Shows git branch and whether it's dirty (with a *)
-- Indicates when you have unpushed/unpulled git commits with up/down arrows.
-  (Check is done asynchronously!)
-- Command execution time will be displayed if it exceeds the set threshold
-  (default 5 seconds)
-- Show number of background jobs (if any)
-
-Right prompt:
-
-- Username and host only displayed when in an SSH session or logged in as root
-
-
-## Install
-
-### Manually
-
-1. Either…
-  - Clone this repo
-  - add it as a submodule, or
-  - just download [`simpl.zsh`](simpl.zsh) and [`async.zsh`](async.zsh)
-
-2. Symlink `simpl.zsh` to somewhere in [`$fpath`](https://www.refining-linux.org/archives/46-ZSH-Gem-12-Autoloading-functions.html) with the name `prompt_simpl_setup`.
-
-3. Symlink `async.zsh` in `$fpath` with the name `async`.
-
-
-## Options
+Simpl supports customization using the following environment variables:
 
 | Option                           | Description                                                                                     | Default value  |
 | :------------------------------- | :---------------------------------------------------------------------------------------------- | :------------- |
@@ -108,17 +57,18 @@ prompt simpl
 ```
 
 
-## Tips
+## Install
 
-In the screenshot you see Simpl running in [Hyper](https://hyper.is) with the [hyper-snazzy](https://github.com/sindresorhus/hyper-snazzy) theme and Menlo font.
+### Manually
 
-The [Tomorrow Night Eighties](https://github.com/chriskempson/tomorrow-theme) theme with the [Droid Sans Mono](https://www.fontsquirrel.com/fonts/droid-sans-mono) font (15pt) is also a [nice combination](https://github.com/sindresorhus/pure/blob/95ee3e7618c6e2162a1e3cdac2a88a20ac3beb27/screenshot.png).<br>
-*Just make sure you have anti-aliasing enabled in your terminal.*
+1. Either…
+  - Clone this repo
+  - add it as a submodule, or
+  - just download [`simpl.zsh`](simpl.zsh) and [`async.zsh`](async.zsh)
 
-To have commands colorized as seen in the screenshot, install [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting).
+2. Symlink `simpl.zsh` to somewhere in [`$fpath`](http://www.refining-linux.org/archives/46/ZSH-Gem-12-Autoloading-functions/) with the name `prompt_simpl_setup`.
 
-
-## Integration
+3. Symlink `async.zsh` in `$fpath` with the name `async`.
 
 ### [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)
 
@@ -165,11 +115,13 @@ zplugin ice pick"async.zsh" src"simpl.zsh"
 zplugin light eduarbo/simpl
 ```
 
-## FAQ
 
-There are currently no FAQs.
+## Tips
 
-See [FAQ Archive](https://github.com/sindresorhus/pure/wiki/FAQ-Archive) for previous FAQs.
+In the screenshot you see Simpl running in [iTerm2](https://www.iterm2.com/) with a custom theme and [Hack](https://sourcefoundry.org/hack/) font.
+
+To have commands colorized as seen in the screenshot, install [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting).
+
 
 ## License
 
