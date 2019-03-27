@@ -54,17 +54,16 @@
 # Configuration
 SIMPL_PREPOSITION_COLOR="${SIMPL_PREPOSITION_COLOR:-"%F{8}"}"
 
-SIMPL_USER_COLOR="${SIMPL_USER_COLOR:-"%F{yellow}"}"
 SIMPL_USER_ROOT_COLOR="${SIMPL_USER_ROOT_COLOR:-"%B%F{red}"}"
+SIMPL_USER_COLOR="${SIMPL_USER_COLOR:-"%F{10}"}"
 SIMPL_HOST_COLOR="${SIMPL_HOST_COLOR:-"${SIMPL_USER_COLOR}"}"
 SIMPL_HOST_SYMBOL_COLOR="${SIMPL_HOST_SYMBOL_COLOR:-"${SIMPL_HOST_COLOR}"}"
-SIMPL_USER_HOST_PREPOSITION="${SIMPL_USER_HOST_PREPOSITION:-"${SIMPL_PREPOSITION_COLOR}at"}"
 
-SIMPL_DIR_COLOR="${SIMPL_DIR_COLOR:-"%F{14}"}"
+SIMPL_DIR_COLOR="${SIMPL_DIR_COLOR:-"%F{magenta}"}"
 
-SIMPL_GIT_BRANCH_COLOR="${SIMPL_GIT_BRANCH_COLOR:-"%F{10}"}"
-SIMPL_GIT_ARROW_COLOR="${SIMPL_GIT_ARROW_COLOR:-"%F{12}"}"
-SIMPL_GIT_DIRTY_SYMBOL="${SIMPL_GIT_DIRTY_SYMBOL:-*}"
+SIMPL_GIT_BRANCH_COLOR="${SIMPL_GIT_BRANCH_COLOR:-"%F{14}"}"
+SIMPL_GIT_DIRTY_SYMBOL="${SIMPL_GIT_DIRTY_SYMBOL:-"%F{red}"•}"
+SIMPL_GIT_ARROW_COLOR="${SIMPL_GIT_ARROW_COLOR:-"%B%F{blue}"}"
 SIMPL_GIT_UP_ARROW="${SIMPL_GIT_UP_ARROW:-⇡}"
 SIMPL_GIT_DOWN_ARROW="${SIMPL_GIT_DOWN_ARROW:-⇣}"
 SIMPL_GIT_UNTRACKED_DIRTY="${SIMPL_GIT_UNTRACKED_DIRTY:-1}"
@@ -75,7 +74,7 @@ SIMPL_VENV_COLOR="${SIMPL_VENV_COLOR:-"%F{magenta}"}"
 
 SIMPL_PROMPT_SYMBOL="${SIMPL_PROMPT_SYMBOL:-❱}"
 SIMPL_PROMPT_ROOT_SYMBOL="${SIMPL_PROMPT_ROOT_SYMBOL:-#}"
-SIMPL_PROMPT_SYMBOL_COLOR="${SIMPL_PROMPT_SYMBOL_COLOR:-"%F{yellow}"}"
+SIMPL_PROMPT_SYMBOL_COLOR="${SIMPL_PROMPT_SYMBOL_COLOR:-"%F{11}"}"
 SIMPL_PROMPT_SYMBOL_ERROR_COLOR="${SIMPL_PROMPT_SYMBOL_ERROR_COLOR:-"%F{red}"}"
 SIMPL_PROMPT2_SYMBOL_COLOR="${SIMPL_PROMPT2_SYMBOL_COLOR:-"%F{8}"}"
 
@@ -594,21 +593,23 @@ prompt_simpl_state_setup() {
 		unset MATCH MBEGIN MEND
 	fi
 
-	local at="${SIMPL_USER_HOST_PREPOSITION}${cl}"
+	local at="${SIMPL_PREPOSITION_COLOR}at${cl}"
 	local in="${SIMPL_PREPOSITION_COLOR}in${cl}"
 
 	local prompt="%(#.${SIMPL_PROMPT_ROOT_SYMBOL}.${SIMPL_PROMPT_SYMBOL})${cl}"
 	local user="%(#.${SIMPL_USER_ROOT_COLOR}%n.${SIMPL_USER_COLOR}%n)${cl}"
 	local username="${user} ${in}"
 	local host_symbol="$PROMPT_SIMPL_HOSTNAME_SYMBOL_MAP[$( hostname -s )]"
-	local host="${SIMPL_HOST_COLOR}%B%m${cl}"
+	local host="${SIMPL_HOST_COLOR}%m${cl}"
 
 	# only show hostname if connected via ssh
 	if [[ "$SSH_CONNECTION" != '' ]]; then
 		if [[ -n $host_symbol ]]; then
-			host="${SIMPL_HOST_SYMBOL_COLOR}${host_symbol}${cl}"
+			host="%B${SIMPL_HOST_SYMBOL_COLOR}${host_symbol}${cl}"
+			username="${host} ${user} ${in}"
+		else
+			username="${user} ${at} ${host} ${in}"
 		fi
-		username="${user} ${at} ${host} ${in}"
 	fi
 
 	typeset -gA prompt_simpl_state
