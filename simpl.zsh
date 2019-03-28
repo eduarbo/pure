@@ -88,8 +88,6 @@ SIMPL_CMD_MAX_EXEC_TIME="${SIMPL_CMD_MAX_EXEC_TIME:=1}"
 SIMPL_EXEC_TIME_COLOR="${SIMPL_EXEC_TIME_COLOR:-"%F{8}"}"
 SIMPL_JOBS_COLOR="${SIMPL_JOBS_COLOR:-"%F{8}"}"
 
-# PROMPT_SIMPL_HOSTNAME_SYMBOL_MAP="${PROMPT_SIMPL_HOSTNAME_SYMBOL_MAP}"
-
 # Utils
 cl="%f%s%u%k%b"
 
@@ -258,6 +256,10 @@ prompt_simpl_precmd() {
 	# Check if we should display the virtual env, we use a sufficiently high
 	# index of psvar (12) here to avoid collisions with user defined entries.
 	psvar[12]=
+	# Check if a conda environment is active and display it's name
+	if [[ -n $CONDA_DEFAULT_ENV ]]; then
+		psvar[12]="${CONDA_DEFAULT_ENV//[$'\t\r\n']}"
+	fi
 	# When VIRTUAL_ENV_DISABLE_PROMPT is empty, it was unset by the user and
 	# Simpl should take back control.
 	if [[ -n $VIRTUAL_ENV ]] && [[ -z $VIRTUAL_ENV_DISABLE_PROMPT || $VIRTUAL_ENV_DISABLE_PROMPT = 12 ]]; then
@@ -657,6 +659,17 @@ prompt_simpl_setup() {
 
 	PROMPT2="${SIMPL_PROMPT2_SYMBOL_COLOR}${prompt_simpl_state[prompt]}${cl} "
 
+	# right prompt
+	if (( $SIMPL_ENABLE_RPROMPT )); then
+		if [[ -n $prompt_simpl_state[username] ]]; then
+			# display username and virtualenv if activated
+			RPROMPT="${prompt_simpl_state[username]}%(12V.%F{8} via ${SIMPL_VENV_COLOR}%12v${cl}.)"
+		else
+			# only display virtualenv when activated
+			RPROMPT="%(12V.${SIMPL_VENV_COLOR}%12v${cl}.)"
+		fi
+	fi
+
 	# Store prompt expansion symbols for in-place expansion via (%). For
 	# some reason it does not work without storing them in a variable first.
 	typeset -ga prompt_simpl_debug_depth
@@ -685,17 +698,6 @@ prompt_simpl_setup() {
 	PROMPT4="${ps4_parts[depth]} ${ps4_symbols}${ps4_parts[prompt]}"
 
 	unset ZSH_THEME  # Guard against Oh My Zsh themes overriding Simpl.
-
-	# right prompt
-	if (( $SIMPL_ENABLE_RPROMPT )); then
-		if [[ -n $prompt_simpl_state[username] ]]; then
-			# display username and virtualenv if activated
-			RPROMPT="${prompt_simpl_state[username]}%(12V.%F{8} via ${SIMPL_VENV_COLOR}%12v${cl}.)"
-		else
-			# only display virtualenv when activated
-			RPROMPT="%(12V.${SIMPL_VENV_COLOR}%12v${cl}.)"
-		fi
-	fi
 }
 
 prompt_simpl_setup "$@"
