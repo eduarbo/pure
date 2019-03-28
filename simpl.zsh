@@ -53,7 +53,8 @@
 
 # Configuration
 SIMPL_ALWAYS_SHOW_USER=${SIMPL_ALWAYS_SHOW_USER:-0}
-SIMPL_ALWAYS_SHOW_HOST=${SIMPL_ALWAYS_SHOW_HOST:-0}
+SIMPL_ALWAYS_SHOW_USER_HOST=${SIMPL_ALWAYS_SHOW_USER_HOST:-0}
+SIMPL_ENABLE_RPROMPT=${SIMPL_ENABLE_RPROMPT:-1}
 
 SIMPL_PREPOSITION_COLOR="${SIMPL_PREPOSITION_COLOR:-"%F{8}"}"
 
@@ -185,7 +186,10 @@ prompt_simpl_preprompt_render() {
 	local -a preprompt_parts
 
 	# Username and machine, if applicable.
-	[[ -n $prompt_simpl_state[username] ]] && preprompt_parts+=("${prompt_simpl_state[username]}")
+	if [[ -n $prompt_simpl_state[username] ]] && (( ! $SIMPL_ENABLE_RPROMPT )); then
+		local in="${SIMPL_PREPOSITION_COLOR}in${cl}"
+		preprompt_parts+=("${prompt_simpl_state[username]} ${in}")
+	fi
 
 	# Set the path.
 	preprompt_parts+=("${SIMPL_DIR_COLOR}%~${cl}")
@@ -596,31 +600,32 @@ prompt_simpl_state_setup() {
 		unset MATCH MBEGIN MEND
 	fi
 
-	local at="${SIMPL_PREPOSITION_COLOR}at${cl}"
-	local in="${SIMPL_PREPOSITION_COLOR}in${cl}"
-
-	local prompt="%(#.${SIMPL_PROMPT_ROOT_SYMBOL}.${SIMPL_PROMPT_SYMBOL})${cl}"
 	local user="%(#.${SIMPL_USER_ROOT_COLOR}%n.${SIMPL_USER_COLOR}%n)${cl}"
-	local host_symbol="$PROMPT_SIMPL_HOSTNAME_SYMBOL_MAP[$( hostname -s )]"
-	local host="${SIMPL_HOST_COLOR}%m${cl}"
+	local username
 
-	local username=
-	(( ${SIMPL_ALWAYS_SHOW_USER} )) && username+="${user} ${in}"
+	if (( ${SIMPL_ALWAYS_SHOW_USER} )) || [[ "$SSH_CONNECTION" != '' ]]; then
+		username="${user}"
+	fi
 
 	# show hostname if connected via ssh or if overridden by option
-	if (( ${SIMPL_ALWAYS_SHOW_HOST} )) || [[ "$SSH_CONNECTION" != '' ]]; then
+	if (( ${SIMPL_ALWAYS_SHOW_USER_HOST} )) || [[ "$SSH_CONNECTION" != '' ]]; then
+		local host_symbol="$PROMPT_SIMPL_HOSTNAME_SYMBOL_MAP[$( hostname -s )]"
+		local host
+
 		if [[ -n $host_symbol ]]; then
 			host="%B${SIMPL_HOST_SYMBOL_COLOR}${host_symbol}${cl}"
-			username="${host} ${user} ${in}"
+			username="${host} ${user}"
 		else
-			username="${user} ${at} ${host} ${in}"
+			local at="${SIMPL_PREPOSITION_COLOR}at${cl}"
+			host="${SIMPL_HOST_COLOR}%m${cl}"
+			username="${user} ${at} ${host}"
 		fi
 	fi
 
 	typeset -gA prompt_simpl_state
 	prompt_simpl_state=(
 		username "${username}"
-		prompt	 "${prompt}"
+		prompt	 "%(#.${SIMPL_PROMPT_ROOT_SYMBOL}.${SIMPL_PROMPT_SYMBOL})${cl}"
 	)
 }
 
@@ -658,8 +663,10 @@ prompt_simpl_setup() {
 
 	prompt_simpl_state_setup
 
+	PROMPT=
+	(( ! $SIMPL_ENABLE_RPROMPT )) && PROMPT+="%(12V.${SIMPL_VENV_COLOR}%12v ${cl}.)"
 	# prompt turns red if the previous command didn't exit with 0
-	PROMPT="%(?.${SIMPL_PROMPT_SYMBOL_COLOR}.${SIMPL_PROMPT_SYMBOL_ERROR_COLOR})${prompt_simpl_state[prompt]}${cl} "
+	PROMPT+="%(?.${SIMPL_PROMPT_SYMBOL_COLOR}.${SIMPL_PROMPT_SYMBOL_ERROR_COLOR})${prompt_simpl_state[prompt]}${cl} "
 
 	PROMPT2="${SIMPL_PROMPT2_SYMBOL_COLOR}${prompt_simpl_state[prompt]}${cl} "
 
@@ -692,8 +699,16 @@ prompt_simpl_setup() {
 
 	unset ZSH_THEME  # Guard against Oh My Zsh themes overriding Simpl.
 
-	# display virtualenv when activated in right prompt
-	RPROMPT="%F{8}%(12V.${SIMPL_VENV_COLOR}%12v${cl} .)"
+	# right prompt
+	if (( $SIMPL_ENABLE_RPROMPT )); then
+		if [[ -n $prompt_simpl_state[username] ]]; then
+			# display username and virtualenv if activated
+			RPROMPT="${prompt_simpl_state[username]}%(12V.%F{8} via ${SIMPL_VENV_COLOR}%12v${cl}.)"
+		else
+			# only display virtualenv when activated
+			RPROMPT="%(12V.${SIMPL_VENV_COLOR}%12v${cl}.)"
+		fi
+	fi
 }
 
 prompt_simpl_setup "$@"
