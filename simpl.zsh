@@ -82,8 +82,6 @@ SIMPL_PROMPT_SYMBOL_COLOR="${SIMPL_PROMPT_SYMBOL_COLOR:-"%F{11}"}"
 SIMPL_PROMPT_SYMBOL_ERROR_COLOR="${SIMPL_PROMPT_SYMBOL_ERROR_COLOR:-"%F{red}"}"
 SIMPL_PROMPT2_SYMBOL_COLOR="${SIMPL_PROMPT2_SYMBOL_COLOR:-"%F{8}"}"
 
-SIMPL_PROMPT_VICMD_SYMBOL="${SIMPL_PROMPT_VICMD_SYMBOL:-❰}"
-
 SIMPL_CMD_MAX_EXEC_TIME="${SIMPL_CMD_MAX_EXEC_TIME:=1}"
 SIMPL_EXEC_TIME_COLOR="${SIMPL_EXEC_TIME_COLOR:-"%F{8}"}"
 SIMPL_JOBS_COLOR="${SIMPL_JOBS_COLOR:-"%F{8}"}"
@@ -554,6 +552,27 @@ prompt_simpl_async_callback() {
 	unset prompt_simpl_async_render_requested
 }
 
+prompt_simpl_set_cursor_style() {
+	local my_terms=(xterm-256color xterm-kitty)
+
+	# Change cursor shape only on tested $TERMs
+	if [[ ${my_terms[(ie)$TERM]} -le ${#my_terms} ]]; then
+		# \e[0 q or \e[ q: reset to whatever's defined in the profile settings
+		# \e[1 q: blinking block
+		# \e[2 q: steady block
+		# \e[3 q: blinking underline
+		# \e[4 q: steady underline
+		# \e[5 q: blinking I-beam
+		# \e[6 q: steady I-beam
+		case $KEYMAP in
+			# vi emulation - command mode
+			vicmd)      echo -ne "\e[1 q";;
+			# vi emulation - insert mode
+			viins|main) echo -ne "\e[3 q";;
+		esac
+	fi
+}
+
 prompt_simpl_state_setup() {
 	setopt localoptions noshwordsplit
 
@@ -651,6 +670,13 @@ prompt_simpl_setup() {
 	add-zsh-hook preexec prompt_simpl_preexec
 
 	prompt_simpl_state_setup
+
+	zle -N prompt_simpl_set_cursor_style
+	if (( $+functions[add-zle-hook-widget] )); then
+		add-zle-hook-widget zle-line-finish prompt_simpl_set_cursor_style
+		add-zle-hook-widget zle-keymap-select prompt_simpl_set_cursor_style
+		add-zle-hook-widget zle-line-init prompt_simpl_set_cursor_style
+	fi
 
 	PROMPT=
 	(( ! $SIMPL_ENABLE_RPROMPT )) && PROMPT+="%(12V.${SIMPL_VENV_COLOR}%12v ${cl}.)"
