@@ -52,6 +52,9 @@
 # \e[2K => clear everything on the current line
 
 # Configuration
+SIMPL_ALWAYS_SHOW_USER=${SIMPL_ALWAYS_SHOW_USER:-0}
+SIMPL_ALWAYS_SHOW_HOST=${SIMPL_ALWAYS_SHOW_HOST:-0}
+
 SIMPL_PREPOSITION_COLOR="${SIMPL_PREPOSITION_COLOR:-"%F{8}"}"
 
 SIMPL_USER_ROOT_COLOR="${SIMPL_USER_ROOT_COLOR:-"%B%F{red}"}"
@@ -598,12 +601,14 @@ prompt_simpl_state_setup() {
 
 	local prompt="%(#.${SIMPL_PROMPT_ROOT_SYMBOL}.${SIMPL_PROMPT_SYMBOL})${cl}"
 	local user="%(#.${SIMPL_USER_ROOT_COLOR}%n.${SIMPL_USER_COLOR}%n)${cl}"
-	local username="${user} ${in}"
 	local host_symbol="$PROMPT_SIMPL_HOSTNAME_SYMBOL_MAP[$( hostname -s )]"
 	local host="${SIMPL_HOST_COLOR}%m${cl}"
 
-	# only show hostname if connected via ssh
-	if [[ "$SSH_CONNECTION" != '' ]]; then
+	local username=
+	(( ${SIMPL_ALWAYS_SHOW_USER} )) && username+="${user} ${in}"
+
+	# show hostname if connected via ssh or if overridden by option
+	if (( ${SIMPL_ALWAYS_SHOW_HOST} )) || [[ "$SSH_CONNECTION" != '' ]]; then
 		if [[ -n $host_symbol ]]; then
 			host="%B${SIMPL_HOST_SYMBOL_COLOR}${host_symbol}${cl}"
 			username="${host} ${user} ${in}"
