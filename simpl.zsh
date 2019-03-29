@@ -85,6 +85,7 @@ SIMPL_PROMPT2_SYMBOL_COLOR="${SIMPL_PROMPT2_SYMBOL_COLOR:-"%F{8}"}"
 SIMPL_CMD_MAX_EXEC_TIME="${SIMPL_CMD_MAX_EXEC_TIME:=1}"
 SIMPL_EXEC_TIME_COLOR="${SIMPL_EXEC_TIME_COLOR:-"%F{8}"}"
 SIMPL_JOBS_COLOR="${SIMPL_JOBS_COLOR:-"%F{8}"}"
+SIMPL_JOBS_SYMBOL="${SIMPL_JOBS_SYMBOL:-↻}"
 
 # Utils
 cl="%f%s%u%k%b"
@@ -200,11 +201,15 @@ prompt_simpl_preprompt_render() {
 		preprompt_parts+=("${SIMPL_GIT_ARROW_COLOR}${prompt_simpl_git_arrows}${cl}")
 	fi
 
-	# display number of jobs in background
-	preprompt_parts+=("${SIMPL_JOBS_COLOR}%(1j.%j&.)${cl}")
+	# Number of jobs in background.
+	if [[ -n $(jobs) ]]; then
+		preprompt_parts+=("%B${SIMPL_JOBS_COLOR}${SIMPL_JOBS_SYMBOL}%(1j.%j.)${cl}")
+	fi
 
 	# Execution time.
-	[[ -n $prompt_simpl_cmd_exec_time ]] && preprompt_parts+=("${SIMPL_EXEC_TIME_COLOR}${prompt_simpl_cmd_exec_time}${cl}")
+	if [[ -n $prompt_simpl_cmd_exec_time ]]; then
+		preprompt_parts+=("%B${SIMPL_EXEC_TIME_COLOR}${prompt_simpl_cmd_exec_time}${cl}")
+	fi
 
 	local cleaned_ps1=$PROMPT
 	local -H MATCH MBEGIN MEND
