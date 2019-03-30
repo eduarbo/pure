@@ -60,14 +60,15 @@ SIMPL_PREPOSITION_COLOR="${SIMPL_PREPOSITION_COLOR:-"%F{8}"}"
 
 SIMPL_USER_ROOT_COLOR="${SIMPL_USER_ROOT_COLOR:-"%B%F{red}"}"
 SIMPL_USER_COLOR="${SIMPL_USER_COLOR:-"%F{10}"}"
-SIMPL_HOST_COLOR="${SIMPL_HOST_COLOR:-"${SIMPL_USER_COLOR}"}"
-SIMPL_HOST_SYMBOL_COLOR="${SIMPL_HOST_SYMBOL_COLOR:-"${SIMPL_HOST_COLOR}"}"
+SIMPL_HOST_COLOR="${SIMPL_HOST_COLOR:-"%F{10}"}"
+SIMPL_HOST_SYMBOL_COLOR="${SIMPL_HOST_SYMBOL_COLOR:-"%B${SIMPL_HOST_COLOR}"}"
 
 SIMPL_DIR_COLOR="${SIMPL_DIR_COLOR:-"%F{magenta}"}"
 
 SIMPL_GIT_BRANCH_COLOR="${SIMPL_GIT_BRANCH_COLOR:-"%F{14}"}"
-SIMPL_GIT_DIRTY_SYMBOL="${SIMPL_GIT_DIRTY_SYMBOL:-"%F{red}"•}"
-SIMPL_GIT_ARROW_COLOR="${SIMPL_GIT_ARROW_COLOR:-"%B%F{blue}"}"
+SIMPL_GIT_ARROW_COLOR="${SIMPL_GIT_ARROW_COLOR:-"%B%F{9}"}"
+SIMPL_GIT_DIRTY_COLOR="${SIMPL_GIT_DIRTY_COLOR:-"%F{9}"}"
+SIMPL_GIT_DIRTY_SYMBOL="${SIMPL_GIT_DIRTY_SYMBOL:-•}"
 SIMPL_GIT_UP_ARROW="${SIMPL_GIT_UP_ARROW:-⇡}"
 SIMPL_GIT_DOWN_ARROW="${SIMPL_GIT_DOWN_ARROW:-⇣}"
 SIMPL_GIT_UNTRACKED_DIRTY="${SIMPL_GIT_UNTRACKED_DIRTY:-1}"
@@ -83,8 +84,8 @@ SIMPL_PROMPT_SYMBOL_ERROR_COLOR="${SIMPL_PROMPT_SYMBOL_ERROR_COLOR:-"%F{red}"}"
 SIMPL_PROMPT2_SYMBOL_COLOR="${SIMPL_PROMPT2_SYMBOL_COLOR:-"%F{8}"}"
 
 SIMPL_CMD_MAX_EXEC_TIME="${SIMPL_CMD_MAX_EXEC_TIME:=1}"
-SIMPL_EXEC_TIME_COLOR="${SIMPL_EXEC_TIME_COLOR:-"%F{8}"}"
-SIMPL_JOBS_COLOR="${SIMPL_JOBS_COLOR:-"%F{8}"}"
+SIMPL_EXEC_TIME_COLOR="${SIMPL_EXEC_TIME_COLOR:-"%B%F{8}"}"
+SIMPL_JOBS_COLOR="${SIMPL_JOBS_COLOR:-"%B%F{8}"}"
 SIMPL_JOBS_SYMBOL="${SIMPL_JOBS_SYMBOL:-↻}"
 
 # Utils
@@ -172,13 +173,6 @@ prompt_simpl_preexec() {
 prompt_simpl_preprompt_render() {
 	setopt localoptions noshwordsplit
 
-	local on="${SIMPL_PREPOSITION_COLOR}on${cl}"
-
-	# Set color for git branch/dirty status, change color if dirty checking has
-	# been delayed.
-	local branch_color="${SIMPL_GIT_BRANCH_COLOR}"
-	[[ -n ${prompt_simpl_git_last_dirty_check_timestamp+x} ]] && branch_color="${cl}%F{red}"
-
 	# Initialize the preprompt array.
 	local -a preprompt_parts
 
@@ -193,22 +187,29 @@ prompt_simpl_preprompt_render() {
 
 	# Add git branch and dirty status info.
 	typeset -gA prompt_simpl_vcs_info
-	if [[ -n $prompt_simpl_vcs_info[branch] ]]; then
-		preprompt_parts+=("${on} ${branch_color}${prompt_simpl_vcs_info[branch]}${prompt_simpl_git_dirty}${cl}")
-	fi
+
 	# Git pull/push arrows.
-	if [[ -n $prompt_simpl_git_arrows ]]; then
-		preprompt_parts+=("${SIMPL_GIT_ARROW_COLOR}${prompt_simpl_git_arrows}${cl}")
+	if [[ -n $prompt_simpl_vcs_info[branch] ]]; then
+		# Set color for git branch/dirty status, change color if dirty checking has
+		# been delayed.
+		local branch_color="${SIMPL_GIT_BRANCH_COLOR}"
+		[[ -n ${prompt_simpl_git_last_dirty_check_timestamp+x} ]] && branch_color="${cl}%F{red}"
+
+		preprompt_parts+=("${SIMPL_PREPOSITION_COLOR}on${cl}")
+		if [[ -n $prompt_simpl_git_arrows ]]; then
+			preprompt_parts+=("${SIMPL_GIT_ARROW_COLOR}${prompt_simpl_git_arrows}${cl}")
+		fi
+		preprompt_parts+=("${branch_color}${prompt_simpl_vcs_info[branch]}${cl}${prompt_simpl_git_dirty}")
 	fi
 
 	# Number of jobs in background.
 	if [[ -n $(jobs) ]]; then
-		preprompt_parts+=("%B${SIMPL_JOBS_COLOR}${SIMPL_JOBS_SYMBOL}%(1j.%j.)${cl}")
+		preprompt_parts+=("${SIMPL_JOBS_COLOR}${SIMPL_JOBS_SYMBOL}%(1j.%j.)${cl}")
 	fi
 
 	# Execution time.
 	if [[ -n $prompt_simpl_cmd_exec_time ]]; then
-		preprompt_parts+=("%B${SIMPL_EXEC_TIME_COLOR}${prompt_simpl_cmd_exec_time}${cl}")
+		preprompt_parts+=("${SIMPL_EXEC_TIME_COLOR}${prompt_simpl_cmd_exec_time}${cl}")
 	fi
 
 	local cleaned_ps1=$PROMPT
@@ -511,7 +512,7 @@ prompt_simpl_async_callback() {
 			if (( code == 0 )); then
 				prompt_simpl_git_dirty=
 			else
-				prompt_simpl_git_dirty="${SIMPL_GIT_DIRTY_SYMBOL}"
+				prompt_simpl_git_dirty="${SIMPL_GIT_DIRTY_COLOR}${SIMPL_GIT_DIRTY_SYMBOL}${cl}"
 			fi
 
 			[[ $prev_dirty != $prompt_simpl_git_dirty ]] && do_render=1
