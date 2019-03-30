@@ -627,7 +627,7 @@ prompt_simpl_state_setup() {
 		local host
 
 		if [[ -n $host_symbol ]]; then
-			host="%B${SIMPL_HOST_SYMBOL_COLOR}${host_symbol}${cl}"
+			host="${SIMPL_HOST_SYMBOL_COLOR}${host_symbol}${cl}"
 			username="${host} ${user}"
 		else
 			local at="${SIMPL_PREPOSITION_COLOR}at${cl}"
@@ -684,22 +684,16 @@ prompt_simpl_setup() {
 		add-zle-hook-widget zle-line-init prompt_simpl_set_cursor_style
 	fi
 
-	PROMPT=
-	(( ! $SIMPL_ENABLE_RPROMPT )) && PROMPT+="%(12V.${SIMPL_VENV_COLOR}%12v ${cl}.)"
+	PROMPT="%(12V.${SIMPL_VENV_COLOR}%12v ${cl}.)"
 	# prompt turns red if the previous command didn't exit with 0
 	PROMPT+="%(?.${SIMPL_PROMPT_SYMBOL_COLOR}.${SIMPL_PROMPT_SYMBOL_ERROR_COLOR})${prompt_simpl_state[prompt]}${cl} "
 
 	PROMPT2="${SIMPL_PROMPT2_SYMBOL_COLOR}${prompt_simpl_state[prompt]}${cl} "
 
 	# right prompt
-	if (( $SIMPL_ENABLE_RPROMPT )); then
-		if [[ -n $prompt_simpl_state[username] ]]; then
-			# display username and virtualenv if activated
-			RPROMPT="${prompt_simpl_state[username]}%(12V.%F{8} via ${SIMPL_VENV_COLOR}%12v${cl}.)"
-		else
-			# only display virtualenv when activated
-			RPROMPT="%(12V.${SIMPL_VENV_COLOR}%12v${cl}.)"
-		fi
+	if (( $SIMPL_ENABLE_RPROMPT )) && [[ -n $prompt_simpl_state[username] ]]; then
+		# display username and host
+		RPROMPT="${prompt_simpl_state[username]}"
 	fi
 
 	# Store prompt expansion symbols for in-place expansion via (%). For
