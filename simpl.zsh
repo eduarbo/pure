@@ -103,7 +103,7 @@ cl="%f%s%u%k%b"
 # turns seconds into human readable time
 # 165392 => 1d 21h 56m 32s
 # https://github.com/sindresorhus/pretty-time-zsh
-prompt_simpl_human_time_to_var() {
+_prompt_simpl_human_time_to_var() {
 	local human total_seconds=$1 var=$2
 	local days=$(( total_seconds / 60 / 60 / 24 ))
 	local hours=$(( total_seconds / 60 / 60 % 24 ))
@@ -119,16 +119,16 @@ prompt_simpl_human_time_to_var() {
 }
 
 # stores (into prompt_simpl_cmd_exec_time) the exec time of the last command if set threshold was exceeded
-prompt_simpl_check_cmd_exec_time() {
+_prompt_simpl_check_cmd_exec_time() {
 	integer elapsed
 	(( elapsed = EPOCHSECONDS - ${prompt_simpl_cmd_timestamp:-$EPOCHSECONDS} ))
 	typeset -g prompt_simpl_cmd_exec_time=
 	(( elapsed > ${SIMPL[CMD_MAX_EXEC_TIME]} )) && {
-		prompt_simpl_human_time_to_var $elapsed "prompt_simpl_cmd_exec_time"
+		_prompt_simpl_human_time_to_var $elapsed "prompt_simpl_cmd_exec_time"
 	}
 }
 
-prompt_simpl_set_title() {
+_prompt_simpl_set_title() {
 	setopt localoptions noshwordsplit
 
 	# emacs terminal does not support settings the title
@@ -157,7 +157,7 @@ prompt_simpl_set_title() {
 	print -n $opts $'\e]0;'${hostname}${2}$'\a'
 }
 
-prompt_simpl_preexec() {
+_prompt_simpl_preexec() {
 	if [[ -n $prompt_simpl_git_fetch_pattern ]]; then
 		# detect when git is performing pull/fetch (including git aliases).
 		local -H MATCH MBEGIN MEND match mbegin mend
@@ -171,7 +171,7 @@ prompt_simpl_preexec() {
 	typeset -g prompt_simpl_cmd_timestamp=$EPOCHSECONDS
 
 	# shows the current dir and executed command in the title while a process is active
-	prompt_simpl_set_title 'ignore-escape' "$PWD:t: $2"
+	_prompt_simpl_set_title 'ignore-escape' "$PWD:t: $2"
 
 	# Disallow python virtualenv from updating the prompt, set it to 12 if
 	# untouched by the user to indicate that Simpl modified it. Here we use
@@ -179,7 +179,7 @@ prompt_simpl_preexec() {
 	export VIRTUAL_ENV_DISABLE_PROMPT=${VIRTUAL_ENV_DISABLE_PROMPT:-12}
 }
 
-prompt_simpl_preprompt_render() {
+_prompt_simpl_preprompt_render() {
 	setopt localoptions noshwordsplit
 
 	# Initialize the preprompt array.
@@ -255,16 +255,16 @@ prompt_simpl_preprompt_render() {
 	typeset -g prompt_simpl_last_prompt=$expanded_prompt
 }
 
-prompt_simpl_precmd() {
+_prompt_simpl_precmd() {
 	# check exec time and store it in a variable
-	prompt_simpl_check_cmd_exec_time
+	_prompt_simpl_check_cmd_exec_time
 	unset prompt_simpl_cmd_timestamp
 
 	# shows the full path in the title
-	prompt_simpl_set_title 'expand-prompt' '%~'
+	_prompt_simpl_set_title 'expand-prompt' '%~'
 
 	# preform async git dirty check and fetch
-	prompt_simpl_async_tasks
+	_prompt_simpl_async_tasks
 
 	# Check if we should display the virtual env, we use a sufficiently high
 	# index of psvar (12) here to avoid collisions with user defined entries.
@@ -281,7 +281,7 @@ prompt_simpl_precmd() {
 	fi
 
 	# print the preprompt
-	prompt_simpl_preprompt_render "precmd"
+	_prompt_simpl_preprompt_render "precmd"
 
 	if [[ -n $ZSH_THEME ]]; then
 		print "WARNING: Oh My Zsh themes are enabled (ZSH_THEME='${ZSH_THEME}'). Simpl might not be working correctly."
@@ -290,7 +290,7 @@ prompt_simpl_precmd() {
 	fi
 }
 
-prompt_simpl_async_git_aliases() {
+_prompt_simpl_async_git_aliases() {
 	setopt localoptions noshwordsplit
 	local -a gitalias pullalias
 
@@ -310,7 +310,7 @@ prompt_simpl_async_git_aliases() {
 	print -- ${(j:|:)pullalias}  # join on pipe (for use in regex).
 }
 
-prompt_simpl_async_vcs_info() {
+_prompt_simpl_async_vcs_info() {
 	setopt localoptions noshwordsplit
 
 	# configure vcs_info inside async task, this frees up vcs_info
@@ -334,7 +334,7 @@ prompt_simpl_async_vcs_info() {
 }
 
 # fastest possible way to check if repo is dirty
-prompt_simpl_async_git_dirty() {
+_prompt_simpl_async_git_dirty() {
 	setopt localoptions noshwordsplit
 	local untracked_dirty=$1
 
@@ -347,7 +347,7 @@ prompt_simpl_async_git_dirty() {
 	return $?
 }
 
-prompt_simpl_async_git_fetch() {
+_prompt_simpl_async_git_fetch() {
 	setopt localoptions noshwordsplit
 
 	# set GIT_TERMINAL_PROMPT=0 to disable auth prompting for git fetch (git 2.3+)
@@ -386,21 +386,21 @@ prompt_simpl_async_git_fetch() {
 	unsetopt monitor
 
 	# check arrow status after a successful git fetch
-	prompt_simpl_async_git_arrows
+	_prompt_simpl_async_git_arrows
 }
 
-prompt_simpl_async_git_arrows() {
+_prompt_simpl_async_git_arrows() {
 	setopt localoptions noshwordsplit
 	command git rev-list --left-right --count HEAD...@'{u}'
 }
 
-prompt_simpl_async_tasks() {
+_prompt_simpl_async_tasks() {
 	setopt localoptions noshwordsplit
 
 	# initialize async worker
 	((!${prompt_simpl_async_init:-0})) && {
 		async_start_worker "prompt_simpl" -u -n
-		async_register_callback "prompt_simpl" prompt_simpl_async_callback
+		async_register_callback "prompt_simpl" _prompt_simpl_async_callback
 		typeset -g prompt_simpl_async_init=1
 	}
 
@@ -424,30 +424,30 @@ prompt_simpl_async_tasks() {
 	fi
 	unset MATCH MBEGIN MEND
 
-	async_job "prompt_simpl" prompt_simpl_async_vcs_info
+	async_job "prompt_simpl" _prompt_simpl_async_vcs_info
 
 	# # only perform tasks inside git working tree
 	[[ -n $prompt_simpl_vcs_info[top] ]] || return
 
-	prompt_simpl_async_refresh
+	_prompt_simpl_async_refresh
 }
 
-prompt_simpl_async_refresh() {
+_prompt_simpl_async_refresh() {
 	setopt localoptions noshwordsplit
 
 	if [[ -z $prompt_simpl_git_fetch_pattern ]]; then
 		# we set the pattern here to avoid redoing the pattern check until the
 		# working three has changed. pull and fetch are always valid patterns.
 		typeset -g prompt_simpl_git_fetch_pattern="pull|fetch"
-		async_job "prompt_simpl" prompt_simpl_async_git_aliases
+		async_job "prompt_simpl" _prompt_simpl_async_git_aliases
 	fi
 
-	async_job "prompt_simpl" prompt_simpl_async_git_arrows
+	async_job "prompt_simpl" _prompt_simpl_async_git_arrows
 
 	# do not preform git fetch if it is disabled or in home folder.
 	if (( ${SIMPL[GIT_PULL]} )) && [[ $prompt_simpl_vcs_info[top] != $HOME ]]; then
 		# tell worker to do a git fetch
-		async_job "prompt_simpl" prompt_simpl_async_git_fetch
+		async_job "prompt_simpl" _prompt_simpl_async_git_fetch
 	fi
 
 	# if dirty checking is sufficiently fast, tell worker to check it again, or wait for timeout
@@ -455,11 +455,11 @@ prompt_simpl_async_refresh() {
 	if (( time_since_last_dirty_check > ${SIMPL[GIT_DELAY_DIRTY_CHECK]} )); then
 		unset prompt_simpl_git_last_dirty_check_timestamp
 		# check check if there is anything to pull
-		async_job "prompt_simpl" prompt_simpl_async_git_dirty ${SIMPL[GIT_UNTRACKED_DIRTY]}
+		async_job "prompt_simpl" _prompt_simpl_async_git_dirty ${SIMPL[GIT_UNTRACKED_DIRTY]}
 	fi
 }
 
-prompt_simpl_check_git_arrows() {
+_prompt_simpl_check_git_arrows() {
 	setopt localoptions noshwordsplit
 	local arrows left=${1:-0} right=${2:-0}
 
@@ -470,13 +470,13 @@ prompt_simpl_check_git_arrows() {
 	typeset -g REPLY=$arrows
 }
 
-prompt_simpl_async_callback() {
+_prompt_simpl_async_callback() {
 	setopt localoptions noshwordsplit
 	local job=$1 code=$2 output=$3 exec_time=$4 next_pending=$6
 	local do_render=0
 
 	case $job in
-		prompt_simpl_async_vcs_info)
+		_prompt_simpl_async_vcs_info)
 			local -A info
 			typeset -gA prompt_simpl_vcs_info
 
@@ -502,7 +502,7 @@ prompt_simpl_async_callback() {
 
 			# update has a git toplevel set which means we just entered a new
 			# git directory, run the async refresh tasks
-			[[ -n $info[top] ]] && [[ -z $prompt_simpl_vcs_info[top] ]] && prompt_simpl_async_refresh
+			[[ -n $info[top] ]] && [[ -z $prompt_simpl_vcs_info[top] ]] && _prompt_simpl_async_refresh
 
 			# always update branch and toplevel
 			prompt_simpl_vcs_info[branch]=$info[branch]
@@ -510,13 +510,13 @@ prompt_simpl_async_callback() {
 
 			do_render=1
 			;;
-		prompt_simpl_async_git_aliases)
+		_prompt_simpl_async_git_aliases)
 			if [[ -n $output ]]; then
 				# append custom git aliases to the predefined ones.
 				prompt_simpl_git_fetch_pattern+="|$output"
 			fi
 			;;
-		prompt_simpl_async_git_dirty)
+		_prompt_simpl_async_git_dirty)
 			local prev_dirty=$prompt_simpl_git_dirty
 			if (( code == 0 )); then
 				prompt_simpl_git_dirty=
@@ -531,13 +531,13 @@ prompt_simpl_async_callback() {
 			# variable. Thus, only upon next rendering of the preprompt will the result appear in a different color.
 			(( $exec_time > 5 )) && prompt_simpl_git_last_dirty_check_timestamp=$EPOCHSECONDS
 			;;
-		prompt_simpl_async_git_fetch|prompt_simpl_async_git_arrows)
-			# prompt_simpl_async_git_fetch executes prompt_simpl_async_git_arrows
+		_prompt_simpl_async_git_fetch|_prompt_simpl_async_git_arrows)
+			# _prompt_simpl_async_git_fetch executes _prompt_simpl_async_git_arrows
 			# after a successful fetch.
 			case $code in
 				0)
 					local REPLY
-					prompt_simpl_check_git_arrows ${(ps:\t:)output}
+					_prompt_simpl_check_git_arrows ${(ps:\t:)output}
 					if [[ $prompt_simpl_git_arrows != $REPLY ]]; then
 						typeset -g prompt_simpl_git_arrows=$REPLY
 						do_render=1
@@ -547,7 +547,7 @@ prompt_simpl_async_callback() {
 					# Git fetch failed.
 					;;
 				*)
-					# Non-zero exit status from prompt_simpl_async_git_arrows,
+					# Non-zero exit status from _prompt_simpl_async_git_arrows,
 					# indicating that there is no upstream configured.
 					if [[ -n $prompt_simpl_git_arrows ]]; then
 						unset prompt_simpl_git_arrows
@@ -563,11 +563,11 @@ prompt_simpl_async_callback() {
 		return
 	fi
 
-	[[ ${prompt_simpl_async_render_requested:-$do_render} = 1 ]] && prompt_simpl_preprompt_render
+	[[ ${prompt_simpl_async_render_requested:-$do_render} = 1 ]] && _prompt_simpl_preprompt_render
 	unset prompt_simpl_async_render_requested
 }
 
-prompt_simpl_set_cursor_style() {
+_prompt_simpl_set_cursor_style() {
 	local my_terms=(xterm-256color xterm-kitty)
 
 	# Change cursor shape only on tested $TERMs
@@ -588,7 +588,7 @@ prompt_simpl_set_cursor_style() {
 	fi
 }
 
-prompt_simpl_state_setup() {
+_prompt_simpl_state_setup() {
 	setopt localoptions noshwordsplit
 
 	# Check SSH_CONNECTION and the current state.
@@ -652,7 +652,7 @@ prompt_simpl_state_setup() {
 	)
 }
 
-prompt_simpl_setup() {
+_prompt_simpl_setup() {
 	# Prevent percentage showing up if output doesn't end with a newline.
 	export PROMPT_EOL_MARK=''
 
@@ -681,16 +681,16 @@ prompt_simpl_setup() {
 	# to be available, it was added in Zsh 5.3.
 	autoload -Uz +X add-zle-hook-widget 2>/dev/null
 
-	add-zsh-hook precmd prompt_simpl_precmd
-	add-zsh-hook preexec prompt_simpl_preexec
+	add-zsh-hook precmd _prompt_simpl_precmd
+	add-zsh-hook preexec _prompt_simpl_preexec
 
-	prompt_simpl_state_setup
+	_prompt_simpl_state_setup
 
-	zle -N prompt_simpl_set_cursor_style
+	zle -N _prompt_simpl_set_cursor_style
 	if (( $+functions[add-zle-hook-widget] )); then
-		add-zle-hook-widget zle-line-finish prompt_simpl_set_cursor_style
-		add-zle-hook-widget zle-keymap-select prompt_simpl_set_cursor_style
-		add-zle-hook-widget zle-line-init prompt_simpl_set_cursor_style
+		add-zle-hook-widget zle-line-finish _prompt_simpl_set_cursor_style
+		add-zle-hook-widget zle-keymap-select _prompt_simpl_set_cursor_style
+		add-zle-hook-widget zle-line-init _prompt_simpl_set_cursor_style
 	fi
 
 	PROMPT="%(12V.${SIMPL[VENV_COLOR]}%12v ${cl}.)"
@@ -735,4 +735,4 @@ prompt_simpl_setup() {
 	unset ZSH_THEME  # Guard against Oh My Zsh themes overriding Simpl.
 }
 
-prompt_simpl_setup "$@"
+_prompt_simpl_setup "$@"
