@@ -86,13 +86,14 @@ otherwise will be `$SIMPL_PROMPT_SYMBOL_FAIL_COLOR` (defaults to red)
 ## Customization
 
 Simpl supports customization by setting the following variables before sourcing
-the prompt, but before that, declare the **SIMPL** namespace `typeset -A SIMPL`.
+the script. Just make sure to declare the **SIMPL** namespace `typeset -A SIMPL`
+before doing any change.
 
 | Option                                 | Description                                                                             | Default value  |
 | :---                                   | :---                                                                                    | :---           |
 | **`SIMPL[ALWAYS_SHOW_USER]`**          | Always show username even if not in an SSH session                                      | `0`            |
 | **`SIMPL[ALWAYS_SHOW_USER_AND_HOST]`** | Always show username and host even if not in an SSH session                             | `0`            |
-| **`SIMPL[CMD_MAX_EXEC_TIME]`**         | The max execution time of a process before its run time is shown when it exits          | `1` second     |
+| **`SIMPL[CMD_MAX_EXEC_TIME]`**         | The max execution time of a process before its run time is shown when it exits          | `5` second     |
 | **`SIMPL[ENABLE_RPROMPT]`**            | Enable right prompt to display user and host there                                      | `0`            |
 | **`SIMPL[GIT_DELAY_DIRTY_CHECK]`**     | Time in seconds to delay git dirty checking when `git status` takes > 5 seconds         | `1800` seconds |
 | **`SIMPL[GIT_PULL]`**                  | Check whether the current Git remote has been updated                                   | `1`            |
