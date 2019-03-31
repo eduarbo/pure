@@ -3,7 +3,7 @@
 > Pretty, minimal, customizable and fast ZSH prompt based on
 > @sindresorhus's [Pure](https://github.com/sindresorhus/pure)
 
-<img src="screenshot.png" width="864">
+<img src="simpl_prompt.png" width="864">
 
 
 ## Screencast
