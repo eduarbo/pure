@@ -52,50 +52,41 @@
 # \e[2K => clear everything on the current line
 
 # Configuration
-# Set default options under the SIMPL namespace
-typeset -Ag SIMPL
+# Set options in the SIMPL namespace to not pollute the global namespace
+typeset -gA SIMPL
 
-SIMPL[ALWAYS_SHOW_USER]=0
-SIMPL[ALWAYS_SHOW_USER_AND_HOST]=0
-SIMPL[CMD_MAX_EXEC_TIME]=1
-SIMPL[ENABLE_RPROMPT]=1
-SIMPL[GIT_DELAY_DIRTY_CHECK]=1800
-SIMPL[GIT_PULL]=1
-SIMPL[GIT_UNTRACKED_DIRTY]=1
+: ${SIMPL[ALWAYS_SHOW_USER]:=0}
+: ${SIMPL[ALWAYS_SHOW_USER_AND_HOST]:=0}
+: ${SIMPL[CMD_MAX_EXEC_TIME]:=1}
+: ${SIMPL[ENABLE_RPROMPT]:=0}
+: ${SIMPL[GIT_DELAY_DIRTY_CHECK]:=1800}
+: ${SIMPL[GIT_PULL]:=1}
+: ${SIMPL[GIT_UNTRACKED_DIRTY]:=1}
 
 # symbols
-SIMPL[GIT_DIRTY_SYMBOL]="•"
-SIMPL[GIT_DOWN_ARROW]="⇣"
-SIMPL[GIT_UP_ARROW]="⇡"
-SIMPL[JOBS_SYMBOL]="↻"
-SIMPL[PROMPT_ROOT_SYMBOL]="#"
-SIMPL[PROMPT_SYMBOL]="❱"
+: ${SIMPL[GIT_DIRTY_SYMBOL]:="•"}
+: ${SIMPL[GIT_DOWN_ARROW]:="⇣"}
+: ${SIMPL[GIT_UP_ARROW]:="⇡"}
+: ${SIMPL[JOBS_SYMBOL]:="↻"}
+: ${SIMPL[PROMPT_ROOT_SYMBOL]:="#"}
+: ${SIMPL[PROMPT_SYMBOL]:="❱"}
 
 # colors
-SIMPL[DIR_COLOR]="%F{magenta}"
-SIMPL[EXEC_TIME_COLOR]="%B%F{8}"
-SIMPL[GIT_ARROW_COLOR]="%B%F{9}"
-SIMPL[GIT_BRANCH_COLOR]="%F{14}"
-SIMPL[GIT_DIRTY_COLOR]="%F{9}"
-SIMPL[HOST_COLOR]="%F{10}"
-SIMPL[HOST_SYMBOL_COLOR]="%B%F{10}"
-SIMPL[JOBS_COLOR]="%B%F{8}"
-SIMPL[PREPOSITION_COLOR]="%F{8}"
-SIMPL[PROMPT_SYMBOL_COLOR]="%F{11}"
-SIMPL[PROMPT_SYMBOL_ERROR_COLOR]="%F{red}"
-SIMPL[PROMPT2_SYMBOL_COLOR]="%F{8}"
-SIMPL[USER_COLOR]="%F{10}"
-SIMPL[USER_ROOT_COLOR]="%B%F{red}"
-SIMPL[VENV_COLOR]="%F{yellow}"
-
-# Iterate over all options to look for env vars that follow the naming
-# convention "SIMPL_" + OPTION_NAME and use its value instead. E.g.
-# SIMPL_JOBS_SYMBOL="&" to overwrite SIMPL[JOBS_SYMBOL]
-for option val in ${(kv)SIMPL}; do
-	# Replace default value for one provided by the user
-	# Having a hard time understanding this? see https://stackoverflow.com/a/51620595
-	SIMPL[$option]="${(P)${:-SIMPL_$option}:-$val}"
-done
+: ${SIMPL[DIR_COLOR]:="%F{magenta}"}
+: ${SIMPL[EXEC_TIME_COLOR]:="%B%F{8}"}
+: ${SIMPL[GIT_ARROW_COLOR]:="%B%F{9}"}
+: ${SIMPL[GIT_BRANCH_COLOR]:="%F{14}"}
+: ${SIMPL[GIT_DIRTY_COLOR]:="%F{9}"}
+: ${SIMPL[HOST_COLOR]:="%F{10}"}
+: ${SIMPL[HOST_SYMBOL_COLOR]:="%B%F{10}"}
+: ${SIMPL[JOBS_COLOR]:="%B%F{8}"}
+: ${SIMPL[PREPOSITION_COLOR]:="%F{8}"}
+: ${SIMPL[PROMPT_SYMBOL_COLOR]:="%F{11}"}
+: ${SIMPL[PROMPT_SYMBOL_ERROR_COLOR]:="%F{red}"}
+: ${SIMPL[PROMPT2_SYMBOL_COLOR]:="%F{8}"}
+: ${SIMPL[USER_COLOR]:="%F{10}"}
+: ${SIMPL[USER_ROOT_COLOR]:="%B%F{red}"}
+: ${SIMPL[VENV_COLOR]:="%F{yellow}"}
 
 # Utils
 cl="%f%s%u%k%b"
