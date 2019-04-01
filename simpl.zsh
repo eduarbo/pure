@@ -77,14 +77,14 @@ typeset -gA SIMPL
 : ${SIMPL[GIT_ARROW_COLOR]:="%B%F{9}"}
 : ${SIMPL[GIT_BRANCH_COLOR]:="%F{14}"}
 : ${SIMPL[GIT_DIRTY_COLOR]:="%F{9}"}
-: ${SIMPL[HOST_COLOR]:="%F{10}"}
-: ${SIMPL[HOST_SYMBOL_COLOR]:="%B%F{10}"}
+: ${SIMPL[HOST_COLOR]:="%F{11}"}
+: ${SIMPL[HOST_SYMBOL_COLOR]:="%B%F{11}"}
 : ${SIMPL[JOBS_COLOR]:="%B%F{8}"}
 : ${SIMPL[PREPOSITION_COLOR]:="%F{8}"}
 : ${SIMPL[PROMPT_SYMBOL_COLOR]:="%F{11}"}
 : ${SIMPL[PROMPT_SYMBOL_ERROR_COLOR]:="%F{red}"}
 : ${SIMPL[PROMPT2_SYMBOL_COLOR]:="%F{8}"}
-: ${SIMPL[USER_COLOR]:="%F{10}"}
+: ${SIMPL[USER_COLOR]:="%F{11}"}
 : ${SIMPL[USER_ROOT_COLOR]:="%B%F{red}"}
 : ${SIMPL[VENV_COLOR]:="%F{yellow}"}
 
@@ -623,6 +623,7 @@ _prompt_simpl_state_setup() {
 		unset MATCH MBEGIN MEND
 	fi
 
+	local prompt="%(#.${SIMPL[PROMPT_ROOT_SYMBOL]}.${SIMPL[PROMPT_SYMBOL]})${cl}"
 	local user="%(#.${SIMPL[USER_ROOT_COLOR]}%n.${SIMPL[USER_COLOR]}%n)${cl}"
 	local username
 
@@ -648,7 +649,7 @@ _prompt_simpl_state_setup() {
 	typeset -gA prompt_simpl_state
 	prompt_simpl_state=(
 		username "${username}"
-		prompt	 "%(#.${SIMPL[PROMPT_ROOT_SYMBOL]}.${SIMPL[PROMPT_SYMBOL]})${cl}"
+		prompt	 "${prompt}"
 	)
 }
 
