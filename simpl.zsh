@@ -235,13 +235,16 @@ _prompt_simpl_preprompt_render() {
 	local expanded_prompt
 	expanded_prompt="${(S%%)PROMPT}"
 
-	if [[ $1 == precmd ]]; then
-		# Initial newline, for spaciousness.
+	if [[ $1 == precmd && $SIMPL_NEWLINE_BEFORE_PROMPT == true ]]; then
+		# Print a newline before the prompt, unless it's the first prompt in the
+		# parent process
 		print
 	elif [[ $prompt_simpl_last_prompt != $expanded_prompt ]]; then
 		# Redraw the prompt.
 		zle && zle .reset-prompt
 	fi
+
+	SIMPL_NEWLINE_BEFORE_PROMPT=true
 
 	typeset -g prompt_simpl_last_prompt=$expanded_prompt
 }
