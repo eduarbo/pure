@@ -72,7 +72,7 @@ typeset -gA SIMPL
 : ${SIMPL[PROMPT_SYMBOL]:="❱"}
 
 # colors
-: ${SIMPL[DIR_COLOR]:="%F{magenta}"}
+: ${SIMPL[DIR_COLOR]:="%F{cyan}"}
 : ${SIMPL[EXEC_TIME_COLOR]:="%B%F{8}"}
 : ${SIMPL[GIT_ARROW_COLOR]:="%B%F{9}"}
 : ${SIMPL[GIT_BRANCH_COLOR]:="%F{14}"}
@@ -81,7 +81,7 @@ typeset -gA SIMPL
 : ${SIMPL[HOST_SYMBOL_COLOR]:="%B%F{11}"}
 : ${SIMPL[JOBS_COLOR]:="%B%F{8}"}
 : ${SIMPL[PREPOSITION_COLOR]:="%F{8}"}
-: ${SIMPL[PROMPT_SYMBOL_COLOR]:="%F{11}"}
+: ${SIMPL[PROMPT_SYMBOL_COLOR]:="%F{yellow}"}
 : ${SIMPL[PROMPT_SYMBOL_ERROR_COLOR]:="%F{red}"}
 : ${SIMPL[PROMPT2_SYMBOL_COLOR]:="%F{8}"}
 : ${SIMPL[USER_COLOR]:="%F{11}"}
