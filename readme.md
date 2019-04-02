@@ -3,12 +3,7 @@
 > Pretty, minimal, customizable and fast ZSH prompt based on
 > @sindresorhus's [Pure](https://github.com/sindresorhus/pure)
 
-<img src="simpl_prompt.png" width="864">
-
-
-## Screencast
-
-<a href="https://asciinema.org/a/7td6jwaefjcnq23sta884t7wr" target="_blank"><img src="https://asciinema.org/a/7td6jwaefjcnq23sta884t7wr.png" /></a>
+<img src="simpl-window-host-symbol-rprompt.png" width="864">
 
 
 ## Overview
