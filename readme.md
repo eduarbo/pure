@@ -196,7 +196,7 @@ zplugin light eduarbo/simpl
 
 ## Tips
 
-In the screenshot you see Simpl running in [iTerm2](https://www.iterm2.com/) with a custom theme and [Hack](https://sourcefoundry.org/hack/) font.
+In the screenshot you see Simpl running in [kitty](https://sw.kovidgoyal.net/kitty/) with a custom theme and [Hack](https://sourcefoundry.org/hack/) font.
 
 To have commands colorized as seen in the screenshot, install [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting).
 
