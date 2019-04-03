@@ -46,21 +46,10 @@ prompt won't be cluttered with fancy and useless battery indicators.
 
 ### Username and host (or its symbol if applicable)
 
-Prompt with right prompt enabled:
-
-![Simpl username and host in the right-side prompt](./assets/simpl-host-rprompt.png)
-
-Prompt with right prompt enabled and host symbol:
-
-![Simpl username and host symbol in the right-side prompt](./assets/simpl-host-symbol-rprompt.png)
-
-Prompt with right prompt disabled:
-
-![Simpl username and host](./assets/simpl-host.png)
-
-Prompt with right prompt disabled and host symbol:
-
-![Simpl username and host symbol](./assets/simpl-host-symbol.png)
+|                       | With host symbol                                                                                   | Without host symbol                                                                  |
+| :---                  | :---                                                                                               | :---                                                                                 |
+| Right prompt enabled  | ![Simpl username and host symbol in the right-side prompt](./assets/simpl-host-symbol-rprompt.png) | ![Simpl username and host in the right-side prompt](./assets/simpl-host-rprompt.png) |
+| Right prompt disabled | ![Simpl username and host symbol](./assets/simpl-host-symbol.png)                                  | ![Simpl username and host](./assets/simpl-host.png)                                  |
 
 
 ## Customization
