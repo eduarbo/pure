@@ -73,7 +73,7 @@ customization, source the script.
 | **`SIMPL[GIT_UP_ARROW]`**              | Defines the git up arrow symbol                                                         | `⇡`            |
 | **`SIMPL[JOBS_SYMBOL]`**               | Defines the background jobs symbol                                                      | `↻`            |
 | **`SIMPL[PROMPT_ROOT_SYMBOL]`**        | Defines the prompt symbol when logged in as root                                        | `#`            |
-| **`SIMPL[PROMPT_SYMBOL]`**             | Defines the prompt symbol                                                               | `❱**            |
+| **`SIMPL[PROMPT_SYMBOL]`**             | Defines the prompt symbol                                                               | `❱`            |
 
 ### Colors
 
