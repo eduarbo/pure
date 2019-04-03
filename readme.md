@@ -20,7 +20,7 @@ visually pleasing that stayed out of my way.
 - Command execution time will be displayed if it exceeds the set threshold
 - Username and host only displayed when in an SSH session
 - Host and username can be displayed on the right side of the screen (`RPROMPT`)
-- Host can be displayed as a symbol
+- Host can be displayed as a symbol for easy identification or `a e s t h e t i c s`
 - Shows the current path in the title and the current folder & command when a process is running
 - Makes an excellent starting point for your own custom prompt
 - Support VI-mode indication by changing the cursor shape
