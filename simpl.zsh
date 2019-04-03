@@ -636,7 +636,7 @@ _prompt_simpl_state_setup() {
 
 	# show hostname if connected via ssh or if overridden by option
 	if (( ${SIMPL[ALWAYS_SHOW_USER_AND_HOST]} )) || [[ "$SSH_CONNECTION" != '' ]]; then
-		local host_symbol="$PROMPT_SIMPL_HOSTNAME_SYMBOL_MAP[$( hostname -s )]"
+		local host_symbol="$SIMPL_HOST_SYMBOL_MAP[$( hostname -s )]"
 		local host
 
 		if [[ -n $host_symbol ]]; then
