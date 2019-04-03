@@ -1,4 +1,4 @@
-# Simpl
+# Simpl v1.0.0
 # by Eduardo Ruiz
 # https://github.com/eduarbo/simpl
 # MIT License
