@@ -63,14 +63,22 @@ customization, source the script.
 | **`SIMPL[GIT_DELAY_DIRTY_CHECK]`**     | Time in seconds to delay git dirty checking when `git status` takes > 5 seconds         | `1800` seconds |
 | **`SIMPL[GIT_PULL]`**                  | Check whether the current Git remote has been updated                                   | `1`            |
 | **`SIMPL[GIT_UNTRACKED_DIRTY]`**       | Include untracked files in dirtiness check. Mostly useful on large repos (like WebKit). | `1`            |
-|                                        |                                                                                         |                |
+
+### Symbols
+
+| Option                                 | Description                                                                             | Default value  |
+| :---                                   | :---                                                                                    | :---           |
 | **`SIMPL[GIT_DIRTY_SYMBOL]`**          | Defines the symbol for dirty git branches                                               | `*`            |
 | **`SIMPL[GIT_DOWN_ARROW]`**            | Defines the git down arrow symbol                                                       | `⇣`            |
 | **`SIMPL[GIT_UP_ARROW]`**              | Defines the git up arrow symbol                                                         | `⇡`            |
 | **`SIMPL[JOBS_SYMBOL]`**               | Defines the background jobs symbol                                                      | `↻`            |
 | **`SIMPL[PROMPT_ROOT_SYMBOL]`**        | Defines the prompt symbol when logged in as root                                        | `#`            |
-| **`SIMPL[PROMPT_SYMBOL]`**             | Defines the prompt symbol                                                               | `❱`            |
-|                                        |                                                                                         |                |
+| **`SIMPL[PROMPT_SYMBOL]`**             | Defines the prompt symbol                                                               | `❱**            |
+
+### Colors
+
+| Option                                 | Description                                                                             | Default value  |
+| :---                                   | :---                                                                                    | :---           |
 | **`SIMPL[DIR_COLOR]`**                 | Defines color for the current working directory                                         | `%F{magenta}`  |
 | **`SIMPL[EXEC_TIME_COLOR]`**           | Defines color for the max execution time of a process                                   | `%B%F{8}`      |
 | **`SIMPL[GIT_ARROW_COLOR]`**           | Defines color for both git arrows symbol                                                | `%B%F{9}`      |
