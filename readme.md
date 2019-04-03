@@ -5,7 +5,6 @@
 
 ![Simpl demo](./assets/simpl-demo.gif)
 
-
 ## Overview
 
 Most prompts are cluttered, ugly and slow. I wanted something minimalist and
@@ -13,69 +12,53 @@ visually pleasing that stayed out of my way.
 
 ### Why?
 
-- Comes with the perfect prompt character.
-  Author went through the whole Unicode range to find it.
-- Shows `git` branch and whether it's dirty (with a `*`).
-- Indicates when you have unpushed/unpulled `git` commits with up/down arrows. *(Check is done asynchronously!)*
-- Prompt character turns red if the last command didn't exit with `0`.
-- Command execution time will be displayed if it exceeds the set threshold.
-- Username and host only displayed when in an SSH session.
-- Allow to use the right prompt to show the username and host
-- Shows the current path in the title and the [current folder & command](screenshot-title-cmd.png) when a process is running.
-- Makes an excellent starting point for your own custom prompt.
+- Comes with the perfect prompt character
+  Author went through the whole Unicode range to find it
+- Shows `git` branch and whether it's dirty (with a `*`)
+- Indicates when you have unpushed/unpulled `git` commits with up/down arrows *(Check is done asynchronously!)*
+- Prompt character turns red if the last command didn't exit with `0`
+- Command execution time will be displayed if it exceeds the set threshold
+- Username and host only displayed when in an SSH session
+- Host and username can be displayed on the right side of the screen (`RPROMPT`)
+- Host can be displayed as a symbol
+- Shows the current path in the title and the current folder & command when a process is running
+- Makes an excellent starting point for your own custom prompt
 - Very customizable
 
 ### Description
 
 My prompt consist of 3 parts, the main left-sided prompt just with a prompt
 character so I have room for long commands, a pre-left-sided prompt to display
-the main context (e.g. pwd and git info), and a right-sided prompt for
-additional context that dissapears when text goes over it or line is accepted.
+the main context (user, host, pwd, git info, exec time, background jobs), and an
+optional right-sided prompt that dissapears when text goes over it or line is
+accepted.
 
 This structure makes it easy to read for me as I can identify easily the
 executed commands and working directories through the scrollback buffer due to
-its fixed position in the line. Since the right-sided prompt is splited in 2
+its fixed position in the line. Since the left-sided prompt is splited in 2
 lines it works well on small windows. This is perfect to me as I always end up
 working with multiple tmux panes.
 
 To keep it simple I just support the features I use on a daily basis, so this
-prompt won't be cluttered with fancy battery indicators.
+prompt won't be cluttered with fancy and useless battery indicators.
+
+### Username and host (or its symbol if applicable)
 
 Prompt with right prompt enabled:
 
-```
-~/dev/simpl on ⇡ master* ↻4 42s
-virtualenv ❱                                                 eduarbo at GlaDoS
-```
+![Simpl username and host in the right-side prompt](./assets/simpl-host-rprompt.gif)
+
+Prompt with right prompt enabled and host symbol:
+
+![Simpl username and host symbol in the right-side prompt](./assets/simpl-host-symbol-rprompt.gif)
 
 Prompt with right prompt disabled:
 
-```
-eduarbo at GlaDoS in ~/dev/simpl on ⇡ master* ↻4 42s
-virtualenv ❱
-```
+![Simpl username and host](./assets/simpl-host.gif)
 
-#### Left prompt:
+Prompt with right prompt disabled and host symbol:
 
-- `❱` is shown if you are a normal user. When root, a classic # will be shown instead
-- `❱` will be `$SIMPL[PROMPT_SYMBOL_COLOR]` if the last command exited successfully,
-otherwise will be `$SIMPL_PROMPT_SYMBOL_FAIL_COLOR` (defaults to red)
-- Displays python's virtualenv name before `❱` if activated
-
-#### Pre left prompt:
-
-- A short `pwd` version is shown
-- Shows username and host when `SIMPL[ENABLE_RPROMPT]=0`
-- Shows git branch and whether it's dirty (with a *)
-- Indicates when you have unpushed/unpulled git commits with up/down arrows.
-  (Check is done asynchronously!)
-- Command execution time will be displayed if it exceeds the set threshold
-  (default 5 seconds)
-- Show number of background jobs (if any)
-
-#### Right prompt:
-
-- Shows username and host when `SIMPL[ENABLE_RPROMPT]=1`
+![Simpl username and host symbol](./assets/simpl-host-symbol.gif)
 
 
 ## Customization
@@ -122,6 +105,13 @@ before doing any change.
 ```sh
 # .zshrc
 autoload -U promptinit; promptinit
+
+# Declare the associative array to map hosts to a symbol
+typeset -A PROMPT_SIMPL_HOSTNAME_SYMBOL_MAP
+PROMPT_SIMPL_HOSTNAME_SYMBOL_MAP=(
+  lavos "ᚱ"
+  htpc "Ħ"
+)
 
 # Declare the namespace for the options
 typeset -A SIMPL
