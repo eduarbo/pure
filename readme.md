@@ -12,19 +12,22 @@ visually pleasing that stayed out of my way.
 
 ### Why?
 
-- Comes with the perfect prompt character
-  Author went through the whole Unicode range to find it
+- Comes with the perfect prompt character Author went through the whole Unicode
+  range to find it
 - Shows `git` branch and whether it's dirty (with a `*`)
-- Indicates when you have unpushed/unpulled `git` commits with up/down arrows *(Check is done asynchronously!)*
+- Indicates when you have unpushed/unpulled `git` commits with up/down arrows
+  *(Check is done asynchronously!)*
 - Prompt character turns red if the last command didn't exit with `0`
 - Command execution time will be displayed if it exceeds the set threshold
 - Username and host only displayed when in an SSH session
 - Host and username can be displayed on the right side of the screen (`RPROMPT`)
-- Host can be displayed as a symbol for easy identification or `a e s t h e t i c s`
-- Shows the current path in the title and the current folder & command when a process is running
+- Host can be displayed as a symbol for easy identification or `a e s t h e t i
+  c s`
+- Shows the current path in the title and the current folder & command when a
+  process is running
 - Makes an excellent starting point for your own custom prompt
-- Support VI-mode indication by changing the cursor shape
-  `_` for insert mode and `█` for command mode
+- Support VI-mode indication by changing the cursor shape `_` for insert mode
+  and `█` for command mode
 - Very customizable
 
 ### Description
@@ -44,19 +47,12 @@ multiple kitty/tmux panes.
 To keep it simple I just support the features I use on a daily basis, so this
 prompt won't be cluttered with fancy and useless battery indicators.
 
-### Username and host (or its symbol if applicable)
-
-| Right prompt disabled                                             | Right prompt enabled                                                                               |
-| :---                                                              | :---                                                                                               |
-| ![Simpl username and host](./assets/simpl-host.png)               | ![Simpl username and host in the right-side prompt](./assets/simpl-host-rprompt.png)               |
-| ![Simpl username and host symbol](./assets/simpl-host-symbol.png) | ![Simpl username and host symbol in the right-side prompt](./assets/simpl-host-symbol-rprompt.png) |
-
 
 ## Customization
 
-Simpl supports customization by setting the following variables before sourcing
-the script. Just make sure to declare the **SIMPL** namespace `typeset -A SIMPL`
-before doing any change.
+Simpl supports customization by setting environment variables. Just make sure to
+declare the **SIMPL** namespace `typeset -A SIMPL` first. Once finished with the
+customization, source the script.
 
 | Option                                 | Description                                                                             | Default value  |
 | :---                                   | :---                                                                                    | :---           |
@@ -91,15 +87,27 @@ before doing any change.
 | **`SIMPL[USER_ROOT_COLOR]`**           | Defines color for the username when logged in as root                                   | `%B%F{red}`    |
 | **`SIMPL[VENV_COLOR]`**                | Defines color for the python virtualenv                                                 | `%F{yellow}`   |
 
+### Username and host (or a symbol if applicable)
+
+If you are more of the visual type then you can replace the hostname with a
+symbol of your liking. Declare the env var `SIMPL_HOST_SYMBOL_MAP`as an
+associative array to map each host to a symbol.
+
+| Right prompt disabled                                             | Right prompt enabled                                                                               |
+| :---                                                              | :---                                                                                               |
+| ![Simpl username and host](./assets/simpl-host.png)               | ![Simpl username and host in the right-side prompt](./assets/simpl-host-rprompt.png)               |
+| ![Simpl username and host symbol](./assets/simpl-host-symbol.png) | ![Simpl username and host symbol in the right-side prompt](./assets/simpl-host-symbol-rprompt.png) |
+
+
 ## Example
 
 ```sh
 # .zshrc
 autoload -U promptinit; promptinit
 
-# Declare the associative array to map hosts to a symbol
-typeset -A PROMPT_SIMPL_HOSTNAME_SYMBOL_MAP
-PROMPT_SIMPL_HOSTNAME_SYMBOL_MAP=(
+# Declare the associative array to map each host to a symbol
+typeset -A SIMPL_HOST_SYMBOL_MAP
+SIMPL_HOST_SYMBOL_MAP=(
   lavos "ᚱ"
   htpc "Ħ"
 )
@@ -177,9 +185,9 @@ zplugin light eduarbo/simpl
 
 ## Tips
 
-In the screenshot you see Simpl running in [kitty](https://sw.kovidgoyal.net/kitty/) with a custom theme and [Hack](https://sourcefoundry.org/hack/) font.
-
-To have commands colorized as seen in the screenshot, install [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting).
+In the screenshot you see Simpl running in
+[kitty](https://sw.kovidgoyal.net/kitty/) with a custom theme and
+[Hack](https://sourcefoundry.org/hack/) font.
 
 
 ## License
