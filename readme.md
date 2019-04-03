@@ -1,6 +1,6 @@
 # Simpl
 
-> Pretty, minimal, customizable and fast ZSH prompt based on
+> Simple, pretty, minimal, customizable and fast ZSH prompt based on
 > @sindresorhus's [Pure](https://github.com/sindresorhus/pure)
 
 ![Simpl demo](./assets/simpl-demo.gif)
