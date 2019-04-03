@@ -23,6 +23,8 @@ visually pleasing that stayed out of my way.
 - Host can be displayed as a symbol
 - Shows the current path in the title and the current folder & command when a process is running
 - Makes an excellent starting point for your own custom prompt
+- Support VI-mode indication by changing the cursor shape
+  `_` for insert mode and `█` for command mode
 - Very customizable
 
 ### Description
@@ -35,9 +37,9 @@ accepted.
 
 This structure makes it easy to read for me as I can identify easily the
 executed commands and working directories through the scrollback buffer due to
-its fixed position in the line. Since the left-sided prompt is splited in 2
-lines it works well on small windows. This is perfect to me as I always end up
-working with multiple tmux panes.
+its fixed position in the line. Since the prompt is splited in 2 lines it works
+well on small windows. This is perfect to me as I always end up working with
+multiple kitty/tmux panes.
 
 To keep it simple I just support the features I use on a daily basis, so this
 prompt won't be cluttered with fancy and useless battery indicators.
