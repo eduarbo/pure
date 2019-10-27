@@ -50,50 +50,49 @@ prompt won't be cluttered with fancy and useless battery indicators.
 
 ## Customization
 
-Simpl supports customization by setting environment variables. Just make sure to
-declare the **SIMPL** namespace `typeset -A SIMPL` first. Once finished with the
+Simpl supports customization by setting environment variables. Once finished with the
 customization, source the script.
 
 | Option                                 | Description                                                                             | Default value  |
 | :---                                   | :---                                                                                    | :---           |
-| **`SIMPL[ALWAYS_SHOW_USER]`**          | Always show username even if not in an SSH session                                      | `0`            |
-| **`SIMPL[ALWAYS_SHOW_USER_AND_HOST]`** | Always show username and host even if not in an SSH session                             | `0`            |
-| **`SIMPL[CMD_MAX_EXEC_TIME]`**         | The max execution time of a process before its run time is shown when it exits          | `5` second     |
-| **`SIMPL[ENABLE_RPROMPT]`**            | Enable right prompt to display user and host there                                      | `0`            |
-| **`SIMPL[GIT_DELAY_DIRTY_CHECK]`**     | Time in seconds to delay git dirty checking when `git status` takes > 5 seconds         | `1800` seconds |
-| **`SIMPL[GIT_PULL]`**                  | Check whether the current Git remote has been updated                                   | `1`            |
-| **`SIMPL[GIT_UNTRACKED_DIRTY]`**       | Include untracked files in dirtiness check. Mostly useful on large repos (like WebKit). | `1`            |
+| **`SIMPL_ALWAYS_SHOW_USER`**          | Always show username even if not in an SSH session                                      | `0`            |
+| **`SIMPL_ALWAYS_SHOW_USER_AND_HOST`** | Always show username and host even if not in an SSH session                             | `0`            |
+| **`SIMPL_CMD_MAX_EXEC_TIME`**         | The max execution time of a process before its run time is shown when it exits          | `5` second     |
+| **`SIMPL_ENABLE_RPROMPT`**            | Enable right prompt to display user and host there                                      | `0`            |
+| **`SIMPL_GIT_DELAY_DIRTY_CHECK`**     | Time in seconds to delay git dirty checking when `git status` takes > 5 seconds         | `1800` seconds |
+| **`SIMPL_GIT_PULL`**                  | Check whether the current Git remote has been updated                                   | `1`            |
+| **`SIMPL_GIT_UNTRACKED_DIRTY`**       | Include untracked files in dirtiness check. Mostly useful on large repos (like WebKit). | `1`            |
 
 ### Symbols
 
 | Option                                 | Description                                                                             | Default value  |
 | :---                                   | :---                                                                                    | :---           |
-| **`SIMPL[GIT_DIRTY_SYMBOL]`**          | Defines the symbol for dirty git branches                                               | `*`            |
-| **`SIMPL[GIT_DOWN_ARROW]`**            | Defines the git down arrow symbol                                                       | `⇣`            |
-| **`SIMPL[GIT_UP_ARROW]`**              | Defines the git up arrow symbol                                                         | `⇡`            |
-| **`SIMPL[JOBS_SYMBOL]`**               | Defines the background jobs symbol                                                      | `↻`            |
-| **`SIMPL[PROMPT_ROOT_SYMBOL]`**        | Defines the prompt symbol when logged in as root                                        | `#`            |
-| **`SIMPL[PROMPT_SYMBOL]`**             | Defines the prompt symbol                                                               | `❱`            |
+| **`SIMPL_GIT_DIRTY_SYMBOL`**          | Defines the symbol for dirty git branches                                               | `*`            |
+| **`SIMPL_GIT_DOWN_ARROW`**            | Defines the git down arrow symbol                                                       | `⇣`            |
+| **`SIMPL_GIT_UP_ARROW`**              | Defines the git up arrow symbol                                                         | `⇡`            |
+| **`SIMPL_JOBS_SYMBOL`**               | Defines the background jobs symbol                                                      | `↻`            |
+| **`SIMPL_PROMPT_ROOT_SYMBOL`**        | Defines the prompt symbol when logged in as root                                        | `#`            |
+| **`SIMPL_PROMPT_SYMBOL`**             | Defines the prompt symbol                                                               | `❱`            |
 
 ### Colors
 
 | Option                                 | Description                                                                             | Default value  |
 | :---                                   | :---                                                                                    | :---           |
-| **`SIMPL[DIR_COLOR]`**                 | Defines color for the current working directory                                         | `%F{magenta}`  |
-| **`SIMPL[EXEC_TIME_COLOR]`**           | Defines color for the max execution time of a process                                   | `%B%F{8}`      |
-| **`SIMPL[GIT_ARROW_COLOR]`**           | Defines color for both git arrows symbol                                                | `%B%F{9}`      |
-| **`SIMPL[GIT_BRANCH_COLOR]`**          | Defines color for the git branch symbol                                                 | `%F{14}`       |
-| **`SIMPL[GIT_DIRTY_COLOR]`**           | Defines color for the git dirty symbol                                                  | `%F{9}`        |
-| **`SIMPL[HOST_COLOR]`**                | Defines color for the host                                                              | `%F{10}`       |
-| **`SIMPL[HOST_SYMBOL_COLOR]`**         | Defines color for the host symbol                                                       | `%B%F{10}`     |
-| **`SIMPL[JOBS_COLOR]`**                | Defines color for the background jobs                                                   | `%B%F{8}`      |
-| **`SIMPL[PREPOSITION_COLOR]`**         | Defines color for all the prepositions                                                  | `%F{8}`        |
-| **`SIMPL[PROMPT_SYMBOL_COLOR`**        | Defines color for the prompt symbol                                                     | `%F{11}`       |
-| **`SIMPL[PROMPT_SYMBOL_ERROR_COLOR]`** | Defines color for the prompt symbol when last command didn't exit with 0                | `%F{red}`      |
-| **`SIMPL[PROMPT2_SYMBOL_COLOR]`**      | Defines color for the prompt2 symbol                                                    | `%F{8}`        |
-| **`SIMPL[USER_COLOR]`**                | Defines color for the username                                                          | `%F{10}`       |
-| **`SIMPL[USER_ROOT_COLOR]`**           | Defines color for the username when logged in as root                                   | `%B%F{red}`    |
-| **`SIMPL[VENV_COLOR]`**                | Defines color for the python virtualenv                                                 | `%F{yellow}`   |
+| **`SIMPL_DIR_COLOR`**                 | Defines color for the current working directory                                         | `%F{magenta}`  |
+| **`SIMPL_EXEC_TIME_COLOR`**           | Defines color for the max execution time of a process                                   | `%B%F{8}`      |
+| **`SIMPL_GIT_ARROW_COLOR`**           | Defines color for both git arrows symbol                                                | `%B%F{9}`      |
+| **`SIMPL_GIT_BRANCH_COLOR`**          | Defines color for the git branch symbol                                                 | `%F{14}`       |
+| **`SIMPL_GIT_DIRTY_COLOR`**           | Defines color for the git dirty symbol                                                  | `%F{9}`        |
+| **`SIMPL_HOST_COLOR`**                | Defines color for the host                                                              | `%F{10}`       |
+| **`SIMPL_HOST_SYMBOL_COLOR`**         | Defines color for the host symbol                                                       | `%B%F{10}`     |
+| **`SIMPL_JOBS_COLOR`**                | Defines color for the background jobs                                                   | `%B%F{8}`      |
+| **`SIMPL_PREPOSITION_COLOR`**         | Defines color for all the prepositions                                                  | `%F{8}`        |
+| **`SIMPL_PROMPT_SYMBOL_COLOR`**       | Defines color for the prompt symbol                                                     | `%F{11}`       |
+| **`SIMPL_PROMPT_SYMBOL_ERROR_COLOR`** | Defines color for the prompt symbol when last command didn't exit with 0                | `%F{red}`      |
+| **`SIMPL_PROMPT2_SYMBOL_COLOR`**      | Defines color for the prompt2 symbol                                                    | `%F{8}`        |
+| **`SIMPL_USER_COLOR`**                | Defines color for the username                                                          | `%F{10}`       |
+| **`SIMPL_USER_ROOT_COLOR`**           | Defines color for the username when logged in as root                                   | `%B%F{red}`    |
+| **`SIMPL_VENV_COLOR`**                | Defines color for the python virtualenv                                                 | `%F{yellow}`   |
 
 ### Username and host (or a symbol if applicable)
 
@@ -120,13 +119,10 @@ SIMPL_HOST_SYMBOL_MAP=(
   htpc "Ħ"
 )
 
-# Declare the namespace for the options
-typeset -A SIMPL
-
 # optionally define some options
-SIMPL[CMD_MAX_EXEC_TIME]=10
-SIMPL[GIT_DIRTY_SYMBOL]="•"
-SIMPL[JOBS_COLOR]="%B%F{red}"
+SIMPL_CMD_MAX_EXEC_TIME=10
+SIMPL_GIT_DIRTY_SYMBOL="•"
+SIMPL_JOBS_COLOR="%B%F{red}"
 
 prompt simpl
 ```

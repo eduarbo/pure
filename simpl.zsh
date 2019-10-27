@@ -53,40 +53,39 @@
 
 # Configuration
 # Set options in the SIMPL namespace to not pollute the global namespace
-typeset -gA SIMPL
 
-: ${SIMPL[ALWAYS_SHOW_USER]:=0}
-: ${SIMPL[ALWAYS_SHOW_USER_AND_HOST]:=0}
-: ${SIMPL[CMD_MAX_EXEC_TIME]:=5}
-: ${SIMPL[ENABLE_RPROMPT]:=0}
-: ${SIMPL[GIT_DELAY_DIRTY_CHECK]:=1800}
-: ${SIMPL[GIT_PULL]:=1}
-: ${SIMPL[GIT_UNTRACKED_DIRTY]:=1}
+: ${SIMPL_ALWAYS_SHOW_USER:=0}
+: ${SIMPL_ALWAYS_SHOW_USER_AND_HOST:=0}
+: ${SIMPL_CMD_MAX_EXEC_TIME:=5}
+: ${SIMPL_ENABLE_RPROMPT:=0}
+: ${SIMPL_GIT_DELAY_DIRTY_CHECK:=1800}
+: ${SIMPL_GIT_PULL:=1}
+: ${SIMPL_GIT_UNTRACKED_DIRTY:=1}
 
 # symbols
-: ${SIMPL[GIT_DIRTY_SYMBOL]:="*"}
-: ${SIMPL[GIT_DOWN_ARROW]:="⇣"}
-: ${SIMPL[GIT_UP_ARROW]:="⇡"}
-: ${SIMPL[JOBS_SYMBOL]:="↻"}
-: ${SIMPL[PROMPT_ROOT_SYMBOL]:="#"}
-: ${SIMPL[PROMPT_SYMBOL]:="❱"}
+: ${SIMPL_GIT_DIRTY_SYMBOL:="*"}
+: ${SIMPL_GIT_DOWN_ARROW:="⇣"}
+: ${SIMPL_GIT_UP_ARROW:="⇡"}
+: ${SIMPL_JOBS_SYMBOL:="↻"}
+: ${SIMPL_PROMPT_ROOT_SYMBOL:="#"}
+: ${SIMPL_PROMPT_SYMBOL:="❱"}
 
 # colors
-: ${SIMPL[DIR_COLOR]:="%F{cyan}"}
-: ${SIMPL[EXEC_TIME_COLOR]:="%B%F{8}"}
-: ${SIMPL[GIT_ARROW_COLOR]:="%B%F{blue}"}
-: ${SIMPL[GIT_BRANCH_COLOR]:="%F{14}"}
-: ${SIMPL[GIT_DIRTY_COLOR]:="%F{9}"}
-: ${SIMPL[HOST_COLOR]:="%F{11}"}
-: ${SIMPL[HOST_SYMBOL_COLOR]:="%F{yellow}"}
-: ${SIMPL[JOBS_COLOR]:="%B%F{8}"}
-: ${SIMPL[PREPOSITION_COLOR]:="%F{8}"}
-: ${SIMPL[PROMPT_SYMBOL_COLOR]:="%F{yellow}"}
-: ${SIMPL[PROMPT_SYMBOL_ERROR_COLOR]:="%F{red}"}
-: ${SIMPL[PROMPT2_SYMBOL_COLOR]:="%F{8}"}
-: ${SIMPL[USER_COLOR]:="%F{11}"}
-: ${SIMPL[USER_ROOT_COLOR]:="%B%F{red}"}
-: ${SIMPL[VENV_COLOR]:="%F{11}"}
+: ${SIMPL_DIR_COLOR:="%F{cyan}"}
+: ${SIMPL_EXEC_TIME_COLOR:="%B%F{8}"}
+: ${SIMPL_GIT_ARROW_COLOR:="%B%F{blue}"}
+: ${SIMPL_GIT_BRANCH_COLOR:="%F{14}"}
+: ${SIMPL_GIT_DIRTY_COLOR:="%F{9}"}
+: ${SIMPL_HOST_COLOR:="%F{11}"}
+: ${SIMPL_HOST_SYMBOL_COLOR:="%F{yellow}"}
+: ${SIMPL_JOBS_COLOR:="%B%F{8}"}
+: ${SIMPL_PREPOSITION_COLOR:="%F{8}"}
+: ${SIMPL_PROMPT_SYMBOL_COLOR:="%F{yellow}"}
+: ${SIMPL_PROMPT_SYMBOL_ERROR_COLOR:="%F{red}"}
+: ${SIMPL_PROMPT2_SYMBOL_COLOR:="%F{8}"}
+: ${SIMPL_USER_COLOR:="%F{11}"}
+: ${SIMPL_USER_ROOT_COLOR:="%B%F{red}"}
+: ${SIMPL_VENV_COLOR:="%F{11}"}
 
 # Utils
 cl="%f%s%u%k%b"
@@ -114,7 +113,7 @@ _prompt_simpl_check_cmd_exec_time() {
 	integer elapsed
 	(( elapsed = EPOCHSECONDS - ${prompt_simpl_cmd_timestamp:-$EPOCHSECONDS} ))
 	typeset -g prompt_simpl_cmd_exec_time=
-	(( elapsed > ${SIMPL[CMD_MAX_EXEC_TIME]} )) && {
+	(( elapsed > $SIMPL_CMD_MAX_EXEC_TIME )) && {
 		_prompt_simpl_human_time_to_var $elapsed "prompt_simpl_cmd_exec_time"
 	}
 }
@@ -177,13 +176,13 @@ _prompt_simpl_preprompt_render() {
 	local -a preprompt_parts
 
 	# Username and machine, if applicable.
-	if [[ -n $prompt_simpl_state[username] ]] && (( ! $SIMPL[ENABLE_RPROMPT] )); then
-		local in="${SIMPL[PREPOSITION_COLOR]}in${cl}"
+	if [[ -n $prompt_simpl_state[username] ]] && (( ! $SIMPL_ENABLE_RPROMPT )); then
+		local in="${SIMPL_PREPOSITION_COLOR}in${cl}"
 		preprompt_parts+=("${prompt_simpl_state[username]} ${in}")
 	fi
 
 	# Set the path.
-	preprompt_parts+=("${SIMPL[DIR_COLOR]}%~${cl}")
+	preprompt_parts+=("${SIMPL_DIR_COLOR}%~${cl}")
 
 	# Add git branch and dirty status info.
 	typeset -gA prompt_simpl_vcs_info
@@ -192,24 +191,24 @@ _prompt_simpl_preprompt_render() {
 	if [[ -n $prompt_simpl_vcs_info[branch] ]]; then
 		# Set color for git branch/dirty status, change color if dirty checking has
 		# been delayed.
-		local branch_color="${SIMPL[GIT_BRANCH_COLOR]}"
+		local branch_color="${SIMPL_GIT_BRANCH_COLOR}"
 		[[ -n ${prompt_simpl_git_last_dirty_check_timestamp+x} ]] && branch_color="${cl}%F{red}"
 
-		preprompt_parts+=("${SIMPL[PREPOSITION_COLOR]}on${cl}")
+		preprompt_parts+=("${SIMPL_PREPOSITION_COLOR}on${cl}")
 		if [[ -n $prompt_simpl_git_arrows ]]; then
-			preprompt_parts+=("${SIMPL[GIT_ARROW_COLOR]}${prompt_simpl_git_arrows}${cl}")
+			preprompt_parts+=("${SIMPL_GIT_ARROW_COLOR}${prompt_simpl_git_arrows}${cl}")
 		fi
 		preprompt_parts+=("${branch_color}${prompt_simpl_vcs_info[branch]}${cl}${prompt_simpl_git_dirty}")
 	fi
 
 	# Number of jobs in background.
 	if [[ -n $(jobs) ]]; then
-		preprompt_parts+=("${SIMPL[JOBS_COLOR]}${SIMPL[JOBS_SYMBOL]}%(1j.%j.)${cl}")
+		preprompt_parts+=("${SIMPL_JOBS_COLOR}${SIMPL_JOBS_SYMBOL}%(1j.%j.)${cl}")
 	fi
 
 	# Execution time.
 	if [[ -n $prompt_simpl_cmd_exec_time ]]; then
-		preprompt_parts+=("${SIMPL[EXEC_TIME_COLOR]}${prompt_simpl_cmd_exec_time}${cl}")
+		preprompt_parts+=("${SIMPL_EXEC_TIME_COLOR}${prompt_simpl_cmd_exec_time}${cl}")
 	fi
 
 	local cleaned_ps1=$PROMPT
@@ -439,17 +438,17 @@ _prompt_simpl_async_refresh() {
 	async_job "prompt_simpl" _prompt_simpl_async_git_arrows
 
 	# do not preform git fetch if it is disabled or in home folder.
-	if (( ${SIMPL[GIT_PULL]} )) && [[ $prompt_simpl_vcs_info[top] != $HOME ]]; then
+	if (( ${SIMPL_GIT_PULL} )) && [[ $prompt_simpl_vcs_info[top] != $HOME ]]; then
 		# tell worker to do a git fetch
 		async_job "prompt_simpl" _prompt_simpl_async_git_fetch
 	fi
 
 	# if dirty checking is sufficiently fast, tell worker to check it again, or wait for timeout
 	integer time_since_last_dirty_check=$(( EPOCHSECONDS - ${prompt_simpl_git_last_dirty_check_timestamp:-0} ))
-	if (( time_since_last_dirty_check > ${SIMPL[GIT_DELAY_DIRTY_CHECK]} )); then
+	if (( time_since_last_dirty_check > ${SIMPL_GIT_DELAY_DIRTY_CHECK} )); then
 		unset prompt_simpl_git_last_dirty_check_timestamp
 		# check check if there is anything to pull
-		async_job "prompt_simpl" _prompt_simpl_async_git_dirty ${SIMPL[GIT_UNTRACKED_DIRTY]}
+		async_job "prompt_simpl" _prompt_simpl_async_git_dirty ${SIMPL_GIT_UNTRACKED_DIRTY}
 	fi
 }
 
@@ -457,8 +456,8 @@ _prompt_simpl_check_git_arrows() {
 	setopt localoptions noshwordsplit
 	local arrows left=${1:-0} right=${2:-0}
 
-	(( right > 0 )) && arrows+=${SIMPL[GIT_DOWN_ARROW]}
-	(( left > 0 )) && arrows+=${SIMPL[GIT_UP_ARROW]}
+	(( right > 0 )) && arrows+=${SIMPL_GIT_DOWN_ARROW}
+	(( left > 0 )) && arrows+=${SIMPL_GIT_UP_ARROW}
 
 	[[ -n $arrows ]] || return
 	typeset -g REPLY=$arrows
@@ -522,7 +521,7 @@ _prompt_simpl_async_callback() {
 			if (( code == 0 )); then
 				prompt_simpl_git_dirty=
 			else
-				prompt_simpl_git_dirty="${SIMPL[GIT_DIRTY_COLOR]}${SIMPL[GIT_DIRTY_SYMBOL]}${cl}"
+				prompt_simpl_git_dirty="${SIMPL_GIT_DIRTY_COLOR}${SIMPL_GIT_DIRTY_SYMBOL}${cl}"
 			fi
 
 			[[ $prev_dirty != $prompt_simpl_git_dirty ]] && do_render=1
@@ -626,25 +625,25 @@ _prompt_simpl_state_setup() {
 		unset MATCH MBEGIN MEND
 	fi
 
-	local prompt="%(#.${SIMPL[PROMPT_ROOT_SYMBOL]}.${SIMPL[PROMPT_SYMBOL]})${cl}"
-	local user="%(#.${SIMPL[USER_ROOT_COLOR]}%n.${SIMPL[USER_COLOR]}%n)${cl}"
+	local prompt="%(#.${SIMPL_PROMPT_ROOT_SYMBOL}.${SIMPL_PROMPT_SYMBOL})${cl}"
+	local user="%(#.${SIMPL_USER_ROOT_COLOR}%n.${SIMPL_USER_COLOR}%n)${cl}"
 	local username
 
-	if (( ${SIMPL[ALWAYS_SHOW_USER]} )) || [[ "$SSH_CONNECTION" != '' ]]; then
+	if (( ${SIMPL_ALWAYS_SHOW_USER} )) || [[ "$SSH_CONNECTION" != '' ]]; then
 		username="${user}"
 	fi
 
 	# show hostname if connected via ssh or if overridden by option
-	if (( ${SIMPL[ALWAYS_SHOW_USER_AND_HOST]} )) || [[ "$SSH_CONNECTION" != '' ]]; then
+	if (( ${SIMPL_ALWAYS_SHOW_USER_AND_HOST} )) || [[ "$SSH_CONNECTION" != '' ]]; then
 		local host_symbol="$SIMPL_HOST_SYMBOL_MAP[$( hostname -s )]"
 		local host
 
 		if [[ -n $host_symbol ]]; then
-			host="${SIMPL[HOST_SYMBOL_COLOR]}${host_symbol}${cl}"
+			host="${SIMPL_HOST_SYMBOL_COLOR}${host_symbol}${cl}"
 			username="${host} ${user}"
 		else
-			local at="${SIMPL[PREPOSITION_COLOR]}at${cl}"
-			host="${SIMPL[HOST_COLOR]}%m${cl}"
+			local at="${SIMPL_PREPOSITION_COLOR}at${cl}"
+			host="${SIMPL_HOST_COLOR}%m${cl}"
 			username="${user} ${at} ${host}"
 		fi
 	fi
@@ -697,14 +696,14 @@ _prompt_simpl_setup() {
 		add-zle-hook-widget zle-line-init _prompt_simpl_set_cursor_style
 	fi
 
-	PROMPT="%(12V.${SIMPL[VENV_COLOR]}%12v ${cl}.)"
+	PROMPT="%(12V.${SIMPL_VENV_COLOR}%12v ${cl}.)"
 	# prompt turns red if the previous command didn't exit with 0
-	PROMPT+="%(?.${SIMPL[PROMPT_SYMBOL_COLOR]}.${SIMPL[PROMPT_SYMBOL_ERROR_COLOR]})${prompt_simpl_state[prompt]}${cl} "
+	PROMPT+="%(?.${SIMPL_PROMPT_SYMBOL_COLOR}.${SIMPL_PROMPT_SYMBOL_ERROR_COLOR})${prompt_simpl_state[prompt]}${cl} "
 
-	PROMPT2="${SIMPL[PROMPT2_SYMBOL_COLOR]}${prompt_simpl_state[prompt]}${cl} "
+	PROMPT2="${SIMPL_PROMPT2_SYMBOL_COLOR}${prompt_simpl_state[prompt]}${cl} "
 
 	# right prompt
-	if (( $SIMPL[ENABLE_RPROMPT] )) && [[ -n $prompt_simpl_state[username] ]]; then
+	if (( $SIMPL_ENABLE_RPROMPT )) && [[ -n $prompt_simpl_state[username] ]]; then
 		# display username and host
 		RPROMPT="${prompt_simpl_state[username]}"
 	fi
