@@ -1,4 +1,4 @@
-# Simpl v1.0.0
+# Simpl
 # by Eduardo Ruiz
 # https://github.com/eduarbo/simpl
 # MIT License
@@ -650,6 +650,7 @@ _prompt_simpl_state_setup() {
 
 	typeset -gA prompt_simpl_state
 	prompt_simpl_state=(
+		version  "2.0.0"
 		username "${username}"
 		prompt	 "${prompt}"
 	)
